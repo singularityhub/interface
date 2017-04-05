@@ -1,6 +1,6 @@
 web:
   restart: always
-  image: vanessa/singularity-nginx
+  image: vanessa/singularity-recipe
   privileged: true
   expose:
     - "5000"

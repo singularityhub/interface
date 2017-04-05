@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+     <!-- SIDEBAR CONTROLS -->
+<div class="col-md-2" style='padding-top:30px'>
+    <div class="row">
+         <a href="#"><button id="generate_button" class="btn btn-default btn-xl">Generate Bases</button></a> 
+    </div>
+</div>
+
+
+<div class="col-md-10">
+    <div class="row" style="padding-top:35px">
+      {% include "terminal.html" %}
+    </div>
+</div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+          
+        $("#generate_button").click(function(){
+
+            var prompt = $('.prompt')
+            var xhr = new XMLHttpRequest()
+            xhr.open("GET", "/bases/update", true)
+            prompt.typed({
+                strings: ["Generating bases! Hang tight..."],
+                typeSpeed: 1,
+            })
+            xhr.onprogress = function () {
+                var message = "<span class='gray'>" + xhr.responseText.replace("\n", "<br>") + "</span>"
+                //prompt.removeData();
+                $('.typed-cursor').text('');
+                var history = $('.history').html();
+                history = history ? [history] : [];
+                history.push('$ ' + message + '<br>');
+                prompt.html('');
+                $('.history').html(history.join('<br>'));
+                $('section.terminal').scrollTop($('section.terminal').height());
+            }
+            xhr.send()
+        })
+
+    </script>
+{% endblock %}

@@ -6,25 +6,57 @@ Utility functions for singularity-nginx
 
 import os
 import re
-from .logman import bot
+import subprocess
+import time
+from logman import bot
 from glob import glob
 from singularity.cli import Singularity
+from singularity.utils import run_command
 
-def get_containers(install_dir=None):
-    '''get_containers will return a dictionary of installed containers, with the
-    actual path as the value, and keys the names (to provide to the user). These
-    are stored at startup of the server.
+
+def get_user():
+    '''get_user will return the username. With a moder advanced app,
+    we can hook this into a local database.
+    '''
+    username = run_command('whoami')
+    if isinstance(username,bytes):
+        username = username.decode('utf-8')
+    return username.strip('\n').capitalize()
+
+
+def get_images(install_dir=None,subfolder=None):
+    '''get_images is the base/template function to retrieve some set of images
+    in the data directory, where subfolder maps to the image folder.
     :param install_dir: the "install directory" of containers, meaning ../data
     '''
     if install_dir is None:
         here = os.path.dirname(os.path.abspath(__file__))
-        install_dir = os.path.abspath(os.path.join(here,'..','data'))
+        install_dir = os.path.abspath(os.path.join(here,'..','data', subfolder))
     containers = dict()
     file_paths = glob("%s/*.img" %(install_dir))
     for container in file_paths:
         container_name = os.path.basename(container)
         containers[container_name] = container
+    if len(containers) == 0:
+        return None
     return containers
+
+
+def get_containers(install_dir=None):
+    '''get_containers will use will return containers from the containers subfolder
+    under data. These are user specifiec containers that the user has built (not to
+    be stored as bases)
+    '''
+    return get_images(install_dir=install_dir,
+                      subfolder='containers')
+
+
+def get_bases(install_dir=None):
+    '''get_operating system bases and metadata
+    '''
+    bases = get_images(install_dir=install_dir,
+                       subfolder='bases')
+    return bases
 
 
 def get_container_links(name):
@@ -74,7 +106,7 @@ def sanitize(value):
     '''sanitize is a simple function for sanitizing arguments. All arguments
     come in as strings, and we currently only will support single arguments 
     (without phrases) so all spaces and quotes, and special characters are removed.'''
-    return re.sub('[^A-Za-z0-9.]+','', value)
+    return re.sub('[^A-Za-z0-9.:/]+','', value)
 
 
 def check_install(software,command=None):
@@ -106,3 +138,22 @@ def write_json(json_object,filename,mode="w",print_pretty=True):
             filey.writelines(simplejson.dumps(json_object))
     filey.close()
     return filename
+
+
+def pipe(command):
+    '''pipe is the parent function to pip a command and yield
+    lines of output
+    '''
+    if not isinstance(command,list):
+        command = [command]
+
+    proc = subprocess.Popen(
+        command,             #call something with a lot of output so we can see it
+        shell=True,
+        stdout=subprocess.PIPE
+    )
+
+    for line in iter(proc.stdout.readline,''):
+        time.sleep(1)
+        #line = line.rstrip() + '<br/>\n'  
+        yield line

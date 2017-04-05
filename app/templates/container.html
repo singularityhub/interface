@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+{% endblock %}
+
 {% block content %}
+
+<div class="container-fluid">
 
      <!-- SIDEBAR CONTROLS -->
 <div class="col-md-3">
@@ -113,6 +119,7 @@
         </div>
      </div>
   </div><!--column-->
+</div>
 {% endblock %}
 
 {% block scripts %}

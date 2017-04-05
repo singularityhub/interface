@@ -50,14 +50,18 @@ RUN pip install gunicorn==19.3.0
 RUN pip install itsdangerous==0.24
 RUN pip install flask-restful
 RUN pip install singularity
+RUN pip install butterfly
+
+RUN butterfly.server.py --generate-certs --host="localhost" 
+RUN butterfly.server.py --generate-user-pkcs=$USER
 
 # Install Singularity
 
 WORKDIR /tmp
 RUN git clone http://www.github.com/singularityware/singularity
 WORKDIR /tmp/singularity
-RUN git checkout -b lib-refactor
-RUN git pull origin lib-refactor
+RUN git checkout -b development
+RUN git pull origin development
 RUN ./autogen.sh
 RUN ./configure --prefix=/usr/local 
 RUN make 
@@ -70,6 +74,7 @@ RUN mkdir /data
 
 # Add the code
 ADD . /code
+RUN ./code/data/bases/generate_bases.sh
 
 # Clean up
 RUN apt-get autoremove -y

@@ -25,7 +25,9 @@ from main import app
 @app.route('/')
 def index():
     username = get_user()
-    container_names = list(app.containers.keys())
+    container_names = []
+    if app.containers is not None:
+        container_names = list(app.containers.keys())
     return render_template('index.html', containers=container_names,
                                          username=username)
 
@@ -57,7 +59,9 @@ def generator():
 
 @app.route('/containers/random')
 def random():
-    container = choice(list(app.containers.keys()))
+    container = dict()
+    if app.containers is not None:
+        container = choice(list(app.containers.keys()))
     return get_container(container)
 
 

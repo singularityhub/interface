@@ -6,7 +6,7 @@ from utils import (
     get_container_labels
 )
 
-from main import app
+from . import app
 api = Api(app)
 
 class apiContainers(Resource):

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+{% endblock %}
+    
+{% block content %}
+
+    <div class="col-md-3">
+
+        <div class="row">
+         <a href="/browser" target="_blank"><button class="btn btn-default btn-xl question_button">File Browser</button></a>
+        </div>
+
+        <div class="row">
+         <a href="/containers" target="_blank"><button class="btn btn-default btn-xl question_button" disabled>Containers</button></a>
+        </div>
+
+        <div class="row">
+         <a href="/recipe" target="_blank"><button class="btn btn-default btn-xl question_button" disabled>Recipe Generator</button></a>
+        </div>
+
+</div>
+
+<div class ="col-md-9">
+<img style="width:350px;padding-top:180px;margin-left:100px" src="{{ url_for('static', filename='img/robot.png') }}">
+<h1 style="color:#999;padding-left:200px">"Welcome {{ username }}!"</h1>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

@@ -1,13 +1,13 @@
 web:
   restart: always
-  image: vanessa/singularity-recipe
+  image: vanessa/tunel
   privileged: true
   expose:
     - "5000"
   volumes:
     - /usr/src/app/static
     - .:/code
-  command: /usr/local/bin/gunicorn -w 2 -b :5000 app.main:app
+  command: /usr/local/bin/gunicorn -w 2 -b :5000 tunel.main:app
 
 nginx:
   restart: always

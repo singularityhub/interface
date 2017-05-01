@@ -1,0 +1,12 @@
+flask
+flask-restful
+pandas
+requests
+retrying
+selenium
+simplejson
+scikit-learn
+pygments
+google-api-python-client
+google
+oauth2client==3.0

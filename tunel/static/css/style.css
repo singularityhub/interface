@@ -1,6 +1,6 @@
 body {
   background: fff;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Open Sans Condensed', sans-serif;
   font-size: 12px;
 }
 
@@ -9,7 +9,7 @@ body {
   padding: 4em 4em 2em;
   margin-top: 60px;
   margin-left: 50px;
-  box-shadow: 0 0 1em #CCC !important;
+  box-shadow: 0 0 1em #999 !important;
   border-radius: 2px;
 }
 
@@ -22,11 +22,11 @@ form {
   padding: 4em 4em 2em;
   max-width: 420px;
   margin: 20px auto 0;
-  box-shadow: 0 0 1em #CCC !important;
+  box-shadow: 0 0 1em #999 !important;
   border-radius: 2px;
 }
 .question_button {
-  box-shadow: 0 0 1em #CCC !important;
+  box-shadow: 0 0 1em #999 !important;
   border-radius:2px; 
   width:100% !important; 
   margin-top:5px

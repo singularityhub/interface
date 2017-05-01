@@ -1,19 +1,18 @@
-# Singularity Recipe
+# Tunel
 
-**under development!**
+Application and general cluster tools using Singularity containers.
 
 ## Introduction
 Manager and recipe generator for local Singularity containers
-
 
 ## Deployment
 You should clone the repo, and build the container (or you can also just clone and then use docker-compose and it will be pulled from Docker Hub).
 
 
 ```bash
-git clone https://www.github.com/singularityware/singularity-recipe
-cd singularity-recipe
-docker build -t vanessa/singularity-recipe .
+git clone https://www.github.com/vsoch/tunel
+cd tunel
+docker build -t vanessa/tunel .
 ```
 
 ## Deployment

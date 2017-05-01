@@ -2,6 +2,9 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+<script src="https://unpkg.com/react@15/dist/react.min.js"></script>
+<script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -12,6 +15,8 @@
 <div class="col-md-2" style='padding-top:30px'>
     <div class="row">
          <a href="#"><button id="generate_button" class="btn btn-default btn-xl">Generate Bases</button></a> 
+    </div>
+    <div class="row" id="content">
     </div>
 </div>
 
@@ -74,4 +79,21 @@
         })
 
     </script>
+<script type="text/jsx">
+
+      /*** @jsx React.DOM */
+
+      var realPython = React.createClass({
+        render: function() {
+          return (<h2>Greetings, from Real Python!</h2>);
+        }
+      });
+
+      ReactDOM.render(
+        React.createElement(realPython, null),
+        document.getElementById('content')
+      );
+
+
+</script>
 {% endblock %}

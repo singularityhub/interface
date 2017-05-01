@@ -20,16 +20,16 @@ from shelljob import proc
 from random import choice
 import os
 
-from main import app
+from . import app
 
-@app.route('/')
-def index():
+@app.route('/containers')
+def containers():
     username = get_user()
     container_names = []
     if app.containers is not None:
         container_names = list(app.containers.keys())
-    return render_template('index.html', containers=container_names,
-                                         username=username)
+    return render_template('containers.html', containers=container_names,
+                                              username=username)
 
 
 @app.route('/bases/update')

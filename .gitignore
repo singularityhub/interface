@@ -1,2 +1,7 @@
+tunel.egg-info
 *.img
+tunel-server.log
+.data
+dist
+OLD
 __pycache__

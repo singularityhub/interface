@@ -1,2 +1,2 @@
 The images here are bases for the application, meaning that the user can query them to retrieve information
-about available packages for each one. If you want to add a new base, assume that the name will correspond to the name of the image (eg, ubuntu.img will map to ubuntu) and you should add an entry to the bases.json information file to tell the image the correct command to run to retrieve package lists.
+about available packages for each one. If you want to add a new base, assume that the name will correspond to the name of the image (eg, ubuntu.simg will map to ubuntu) and you should add an entry to the bases.json information file to tell the image the correct command to run to retrieve package lists.

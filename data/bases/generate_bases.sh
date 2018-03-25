@@ -8,13 +8,8 @@ fi
 
 echo $HERE
 
-singularity create $HERE/ubuntu.img
-singularity import $HERE/ubuntu.img docker://ubuntu:latest
-singularity create $HERE/centos.img
-singularity import $HERE/centos.img docker://centos:latest
-singularity create $HERE/debian.img
-singularity import $HERE/debian.img docker://debian:latest
-singularity create $HERE/alpine.img
-singularity import $HERE/alpine.img docker://alpine:latest
-singularity create $HERE/busybox.img
-singularity import $HERE/busybox.img docker://busybox:latest
+singularity build $HERE/ubuntu.simg docker://ubuntu:latest
+singularity build $HERE/centos.simg docker://centos:latest
+singularity build $HERE/debian.simg docker://debian:latest
+singularity build $HERE/alpine.simg docker://alpine:latest
+singularity build $HERE/busybox.simg docker://busybox:latest

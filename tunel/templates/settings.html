@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+<style>
+.btn-sm {
+  margin-top:20px !important;
+}
+.active {
+    font-weight:400;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="card" style="padding:20px">
+            <div class="header">
+                <a href="#">
+                 <h3 class="title">Singularity Global Endpoints</a>
+                  </h3>
+                  <span style='float:right'>
+                  <a href='/containers'><button class="btn btn-default">View</button></a>
+                  <a href='/pull'><button class="btn btn-default">Pull</button></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-2">
+    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-link active" 
+           id="v-pills-nvidia-tab" 
+           data-toggle="pill" 
+           href="#v-pills-nvidia" 
+           role="tab" 
+           aria-controls="v-pills-messages" 
+           aria-selected="false">Nvidia Cloud</a>
+        <a class="nav-link" 
+           id="v-pills-docker-tab" 
+           data-toggle="pill" 
+           href="#v-pills-docker" 
+           role="tab" 
+           aria-controls="v-pills-home" 
+           aria-selected="true">Docker Hub</a>
+        <a class="nav-link" 
+           id="v-pills-shub-tab" 
+           data-toggle="pill" 
+           href="#v-pills-shub" 
+           role="tab" 
+           aria-controls="v-pills-profile" 
+           aria-selected="false">Singularity Hub</a>
+    </div>
+    <hr>
+    <div>
+        {% include "sidebar.html" %}
+    </div>
+</div>
+<div class="col-md-10">
+<div class="tab-content" id="v-pills-tabContent">
+  <div class="tab-pane fade show active" 
+       id="v-pills-nvidia" 
+       role="tabpanel" 
+       aria-labelledby="v-pills-nvidia-tab">
+          <p class="well" style="padding-top:20px">Nvidia GPU Cloud requires your token input here.</p>
+          <p class="alert alert-info" id='nvidia-alert' style="display:none"></a>
+          <div class="form-group">
+              <label for="nvidiaToken">Nvidia GPU Cloud Token</label>
+              <input type="text" 
+                     class="form-control" 
+                     id="nvidiaToken" 
+                     name="nvidiaToken"
+                     aria-describedby="nvidiaHelp" 
+                     placeholder="Enter Nvidia token">
+              <small id="nvidiaHelp" 
+                     class="form-text text-muted">Your token will be cached in your home .sregistry credentials file.</small>
+              <input type="submit" id="nvidia_submit" style="margin-top:20px">
+          </div>
+      </div>
+  <div class="tab-pane fade"
+       id="v-pills-docker" 
+       role="tabpanel" 
+       aria-labelledby="v-pills-docker-tab">
+      <p class="well"
+         style="padding-top:20px">Docker Hub does not require any credentials. If you need to pull a private image, set your credentials here.</p>
+  </div>
+  <div class="tab-pane fade" 
+       id="v-pills-shub" 
+       role="tabpanel" 
+       aria-labelledby="v-pills-shub-tab">
+      <p class="well" 
+         style="padding-top:20px">Singularity Hub does not require any credentials.</p>
+  </div>
+  </div>
+</div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+
+
+    // Navigate to author or method page on select
+    $("#nvidia_submit").click(function(){
+
+         console.log("Submit Nvidia Token")
+         var token = $("#nvidiaToken").val();
+         fetch('/set/settings?nvidia=' + token, {
+ 	     method: 'GET'
+         }).then(function(response) {
+            console.log(response)
+            $('#nvidia-alert').html('Your Nvidia token has been updated.');
+            $('#nvidia-alert').show();
+         }).catch(function(err) {
+            console.log(err);
+         });
+
+    });
+</script>
+{% endblock %}

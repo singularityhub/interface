@@ -4,19 +4,17 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/generator.css') }}">
 {% endblock %}
 
-
 {% block content %}
 <div class="perspective effect-rotate-left">
-  <div class="container"><div class="outer-nav--return"></div>
+  <div class="outer-nav--return"></div>
     <div id="viewport" class="l-viewport">
       <div class="l-wrapper">
         <header class="header">
           <a class="header--logo" href="#0">
-            <p>Singularity Recipes</p>
+            <p><span style='color:#e32929'>Container</span>Maker</p>
+            <p class="alert alert-info">What do you want this to look like? 
+               <a href="https://www.github.com/singularityhub/interface/issues" target="_blank">Let us know</a></p>
           </a>
-          <div class="header--nav-toggle">
-            <span></span>
-          </div>
         </header>
         <nav class="l-side-nav">
           <ul class="side-nav">
@@ -35,10 +33,13 @@
                 <h1 style="color:#e32929">Choose your<br>operating<br>system</h1>
                 <button>set <span class="btn-background"></span></button>
                 <select id="os" name="os" style="width:300px">
-                    <option value="ubuntu">ubuntu</option>
-                    <option value="alpine">alpine</option>
-                    <option value="debian">debian</option>
-                    <option value="centos">centos</option>
+                    <option value="docker://ubuntu">ubuntu</option>
+                    <option value="docker://alpine">alpine</option>
+                    <option value="docker://debian">debian</option>
+                    <option value="docker://centos">centos</option>
+                    {% for image in images %}
+                    <option value="{{ image.uri }}">{{ image.uri }}</option>
+                    {% endfor %}
                 </select>
                 <img src="{{ url_for('static', filename='img/robot.png') }}" width="500px" alt="Recipe Time!">
               </div>
@@ -232,16 +233,7 @@
       </div>
     </div>
   </div>
-  <ul class="outer-nav">
-    <li class="is-active">Base</li>
-    <li>Files</li>
-    <li>Install</li>
-    <li>Environment</li>
-    <li>Custom</li>
-    <a href="/"><li style="font-size:36px; font-weight:800">Home</li></a>
-  </ul>
 </div>
-
 {% endblock %}
 
 {% block scripts %}

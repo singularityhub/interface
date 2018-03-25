@@ -4,24 +4,6 @@ This is the Tunel, giving you interactive management for your containers! A loca
 database of metadata and container images is available on the command line and
 for interaction in the browser.
 
-![img/home.png](img/home.png)
-
-You can pull containers from different endpoints! This will eventually include all
-the endpoints that [Singularity Global Client](https://singularityhub.github.io/sregistry-cli/clients)
-supports, and for now is your bread and butter endpoints.
-
-![img/pulling.png](img/pulling.png)
-![img/pulled.png](img/pulled.png)
-
-The settings panel will help to manage tokens which, if you map the database to 
-your computer, will only persist there.
-
-![img/settings.png](img/settings.png)
-
-Also in development is an interface to make it much easier to generate recipes.
-
-![img/recipes.png](img/recipes.png)
-
 ## Goals
 A huge challenge with these modern internet protocols is that there is (still) somewhat
 of a barrier between a command line and a web interface. We have to do extra work to bridge
@@ -44,6 +26,25 @@ what we want to do:
 
 There will likely be many changes in the structure and documentation - this first skeleton was a weekend of
 work and so expect exciting things to come! Please [provide feedback](https://www.github.com/singularityhub/interface/issues) or contribute!
+
+## Interface
+
+![img/home.png](img/home.png)
+
+You can pull containers from different endpoints! This will eventually include all
+the endpoints that [Singularity Global Client](https://singularityhub.github.io/sregistry-cli/clients)
+supports, and for now is your bread and butter endpoints.
+
+![img/pulled.png](img/pulled.png)
+
+The settings panel will help to manage tokens which, if you map the database to 
+your computer, will only persist there.
+
+![img/settings.png](img/settings.png)
+
+Also in development is an interface to make it much easier to generate recipes.
+
+![img/recipes.png](img/recipes.png)
 
 
 ## Quick Start

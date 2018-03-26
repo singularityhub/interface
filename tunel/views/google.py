@@ -30,52 +30,47 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
+from flask import (
+    flash,
+    render_template, 
+    request,
+    session,
+    Response,
+    jsonify
+)
+
+from flask_wtf.csrf import generate_csrf
+from flask_cors import cross_origin
+from werkzeug import secure_filename
+
+from tunel.server import app
+
 import logging
 import os
-import sys
-
-class Logman:
-
-    def __init__(self,stream=True,MESSAGELEVEL=None):
-        self.level = get_logging_level(MESSAGELEVEL)
-        if stream == True:
-            logging.basicConfig(stream=sys.stdout,level=self.level)
-        else:
-            logging.basicConfig(level=self.level)
-        self.logger = logging.getLogger('bone-age')
-        self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+import json
 
 
-def get_logging_level(MESSAGELEVEL=None):
-    '''get_logging_level will return a logging level based on first
-    a variable going into the function, then an environment variable
-    MESSAGELEVEL, and then the default is DEBUG.
-    :param MESSAGELEVEL: the level to get.
-    '''
-    if MESSAGELEVEL == None:
-        MESSAGELEVEL = os.environ.get("MESSAGELEVEL","DEBUG")
+# Endpoints ####################################################################
 
-    if MESSAGELEVEL in ["DEBUG","INFO"]:
-        print("Environment message level found to be %s" %MESSAGELEVEL)
+@app.route('/google')
+def google():
+    credentials = get_credentials()
+    if credentials == False:
+        return flask.redirect(flask.url_for('oauth2callback'))
+    elif credentials.access_token_expired:
+        return flask.redirect(flask.url_for('oauth2callback'))
+    return render_template("google.html")
 
-    if MESSAGELEVEL == "FATAL":
-        return logging.FATAL
 
-    elif MESSAGELEVEL == "CRITICAL":
-        return logging.CRITICAL
+@app.route('/google/drive')
+def drive():
+    credentials = get_credentials()
+    if credentials == False or credentials.access_token_expired:
+        return google()
 
-    elif MESSAGELEVEL == "ERROR":
-        return logging.ERROR
-
-    elif MESSAGELEVEL == "WARNING":
-        return logging.WARNING
-
-    elif MESSAGELEVEL == "INFO":
-        return logging.INFO
-
-    elif MESSAGELEVEL in "DEBUG":
-        return logging.DEBUG
-
-    return logging.DEBUG
-
-bot = Logman()
+    print('now calling fetch')
+    all_files = fetch("'root' in parents and mimeType = 'application/vnd.google-apps.folder'", sort='modifiedTime desc')
+    s = ""
+    for file in all_files:
+        s += "%s, %s<br>" % (file['name'],file['id'])
+    return render_template("drive.html")

@@ -1,6 +1,8 @@
 tunel.egg-info
 *.img
+tunel/config.py
 tunel-server.log
+_site
 .data
 dist
 OLD

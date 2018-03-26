@@ -4,14 +4,13 @@ usage () {
 
     echo "Usage:
           docker run <container> [start|help]
-          docker run -p 80:80 -v /tmp/data:/root/.singularity <container> start
 
           Commands:
              help: show help and exit
              start: the application
          
           Examples:
-              docker run -p 80:80 <container> -v data:/root/.singularity start
+              docker run -d -p 80:80 <container> --privileged -v data:/root/.singularity start
          "
 }
 

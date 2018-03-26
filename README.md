@@ -52,13 +52,13 @@ containers, and run the container in detached mode. You have to use priviledged
 to pull.
 
 ```
-docker run -d -p 80:80 --privileged -v data:/root vanessa/tunel start
+$ docker run -d -p 80:80 --privileged -v data:/root vanessa/tunel start
 ```
 
 It's helpful to give it a name, and then use that for logging, inspection, etc.
 
 ```
-$ docker run --name tunel -d -p 80:80 -v data:/root vanessa/tunel start
+$ docker run --name tunel -d -p 80:80 --privileged -v data:/root vanessa/tunel start
 ```
 ```
 $ docker logs tunel

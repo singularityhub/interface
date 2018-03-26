@@ -168,9 +168,42 @@ def pull():
     return render_template('pull.html', nvidia=nvidia)
 
 
-@app.route('/recipe')
+@app.route('/recipe', methods=['GET','POST'])
 def generator():
-    return render_template('recipe.html')
+
+    recipes = {'docker': "FROM ubuntu\r\n",
+               'singularity': "From: ubuntu\r\nBootstrap: docker"}
+  
+    # Default we assume starting with Singularity
+    convertType='singularity'
+
+    if request.method == "POST":
+        recipe = request.form.get('content')
+        recipeKind = request.form.get('recipe-kind')
+
+        # Save recipe to return to user
+
+        recipes[recipeKind] = recipe
+
+        # Import the right parser
+
+        if recipeKind == "singularity":
+            convertType = "docker"
+            from spython.main.parse import SingularityRecipe as parser
+        else:
+            from spython.main.parse import DockerRecipe as parser
+
+        # Do the conversion, from string
+
+        parser = parser()
+        parser.lines = recipe.split('\n') 
+        if hasattr(parser,'load_recipe'):
+            parser.load_recipe()        
+        parser._parse()
+        recipes[convertType] = parser.convert()
+
+    return render_template('recipe.html', recipes=recipes,
+                                          recipetype=convertType)
 
 
 @app.route('/container/<container>')

@@ -31,7 +31,7 @@
       <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" rel="stylesheet">
       <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
       <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
-
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
 
       {% block head %}
       {% endblock %}
@@ -43,9 +43,10 @@
     {% block content %}
     {% endblock %}
 
-{% block scripts %}
-{% endblock %}
+    {% block scripts %}
+    {% endblock %}
 
-</body>
+   </body>
+   {% include "footer.html" %}
 
 </html>

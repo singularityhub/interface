@@ -17,12 +17,6 @@ body {
   width:300px !important;
 }
 
-form {
-  background: #fff;
-  padding: 4em 4em 2em;
-  max-width: 420px;
-  border-radius: 2px;
-}
 .question_button {
   border-radius:2px; 
   width:100% !important; 

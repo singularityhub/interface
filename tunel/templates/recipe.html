@@ -19,21 +19,30 @@
         <nav class="l-side-nav">
           <ul class="side-nav">
             <li class="is-active"><span>Singularity</span></li>
-            <li><span>Docker</span></li>
+            <li id='docker-section'><span>Docker</span></li>
             <li><span>Home</span></li>
           </ul>
         </nav>
 
         <ul class="l-main-content main-content">
-          <li class="l-section section section--is-active">
+          <li class="l-section section section--is-active" id='singularity-section'>
             <div class="work">
               <h2>Your Recipe</h2>
-                  <div class="form-group">
-                      <label for="content" id='recipe-content'>Singularity</label>
-                      <textarea class="form-control" style="height:300px" id="content" rows="300"></textarea>
-                      <hr>
-                      <button class="btn btn-secondary">Convert</button>
-                  </div>
+
+                 <!-- Singularity Form-->
+                 <form id="singularity-form" action="{{ url_for('generator') }}" method="post">
+                      <div class="form-group">
+                          <label for="content" id='recipe-content'>Singularity</label>
+                          <textarea name="content" 
+                                    class="form-control" 
+                                    style="height:300px" 
+                                    id="content" rows="300">{{ recipes['singularity'] }}</textarea>
+                          <input type="hidden" name="recipe-kind" value="singularity"/>
+                          <hr>
+                          <button type="submit" id="singularity" class="btn btn-secondary submit-form">Convert</button>
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                      </div>
+                  </form>
 
                 <img src="{{ url_for('static', filename='img/robot.png') }}" 
                      width="200px" 
@@ -41,14 +50,24 @@
                      alt="Recipe Time!">
           </div>
           </li>
-          <li class="l-section section">
+          <li class="l-section section" data-type='docker'>
             <div class="work">
               <h2>Your Recipe</h2>
+
+                 <!-- Docker Form -->
+                 <form id="docker-form" action="{{ url_for('generator') }}" method="post">
                   <div class="form-group">
-                      <label for="content" id='recipe-content'>Dockerfile</label>
-                      <textarea class="form-control" style="height:300px" id="content" rows="300"></textarea>
+                      <label for="content" 
+                             id='recipe-content'>Dockerfile</label>
+                      <input type="hidden" name="recipe-kind" value="docker"/>
+                      <textarea name="content"
+                                class="form-control" 
+                                style="height:300px" id="content" rows="300">{{ recipes['docker'] }}</textarea>
                       <hr>
-                      <button class="btn btn-secondary">Convert</button>
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                      <button type="submit" id="docker" class="btn btn-secondary submit-form">Convert</button>
+
+                  </form>
                   </div>
             </div>
           </li>
@@ -75,6 +94,9 @@
     <script type="text/javascript">
     $(document).ready(function() {
       console.log('<3');
+      if ('{{ recipetype }}' == 'docker' ){
+         $('li#docker-section').click();
+      }
     });
     </script>
 {% endblock %}

@@ -115,14 +115,14 @@
                     $("#box").removeClass("alert-warning") 
                     $("#box").text("DONE") 
                     $("#box").addClass("alert-success")
-                    var containers = "<a href='/containers'><button class='btn btn-info'>View Containers</button></a>"
+                    var containers = "<a href='/'><button class='btn btn-info'>View Containers</button></a>"
                     $('.history').append( "<span class='gray'>"+ containers +"</span><br>");
 
                 }
 
                 // First message to user
                 prompt.typed({
-                    strings: ["Pulling image..."],
+                    strings: ["Pulling " + uri + '... (see docker logs for progress)...'],
                     typeSpeed: 1,
                 })
 

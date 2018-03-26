@@ -17,7 +17,7 @@ RUN mkdir /data
 
 # Sregistry with pull fix
 RUN git clone https://www.github.com/singularityhub/sregistry-cli && \
-              d sregistry-cli && python setup.py install
+              cd sregistry-cli && python setup.py install
 
 WORKDIR /tmp
 RUN wget https://github.com/singularityware/singularity/releases/download/2.4.3/singularity-2.4.3.tar.gz \

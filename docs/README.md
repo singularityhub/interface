@@ -30,13 +30,11 @@ have some open source, collaborative fun, and importantly, to help the academic 
 use container technology. This tool is **under construction** however the basic commands
 to pull images and create recipes are working and ready to go! The following things are on the queue:
 
- - Allow a user to serve a local endpoint to serve their own container API
  - Exposing the remainder of Singularity Registry Global Client endpoints (Google Drive, Storage, Dropbox, etc.) so you can move containers easily from one to another
  - An individual container view to inspect and issue other actions for a container.
  - Integration of the [Builders](https://singularityhub.github.io/builders/) so you can create a recipe, click a button, and have it build on Google Cloud.
  - An ability to easily share containers via the various platforms you connect to.
  - Some kind of integration with Github. I love Github, I can't help it.
- - more robust documentation to match the other Container Tools style!
 
 This is exciting because by way of a web interface, we can very easily bring many more modern tools
 to our interaction with containers. There will likely be many changes in the structure and documentation - this first skeleton was a weekend of work and so expect exciting things to come! Please [provide feedback](https://www.github.com/singularityhub/interface/issues) or contribute!

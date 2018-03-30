@@ -42,7 +42,7 @@ while true; do
             ROBOTNAME="${1:-}"
             shift
         ;;
-        --enable-globus)
+        --globus)
             GLOBUSENABLED="yes"
             shift
         ;;

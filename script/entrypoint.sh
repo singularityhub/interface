@@ -8,13 +8,19 @@ usage () {
           Commands:
              help: show help and exit
              start: the application
+             
+          Options:
+             --ename: the endpoint name. If not specified, will make a funny one
+             --globus: enable globus login
          
           Examples:
-              docker run -d -p 80:80 <container> --privileged -v data:/root/.singularity start
+              docker run -d -p 80:80 --privileged -v data:/root/.singularity <container> start
          "
 }
 
 SREGISTRY_START="no"
+ROBOTNAME="sregistry-$(python /code/script/robotnamer.py)"
+GLOBUSENABLED="no"
 
 if [ $# -eq 0 ]; then
     usage
@@ -31,6 +37,15 @@ while true; do
             SREGISTRY_START="yes"
             shift
         ;;
+        --ename)
+            shift
+            ROBOTNAME="${1:-}"
+            shift
+        ;;
+        --enable-globus)
+            GLOBUSENABLED="yes"
+            shift
+        ;;
         -*)
             echo "Unknown option: ${1:-}"
             exit 1
@@ -44,6 +59,25 @@ done
 # Are we starting the server?
 
 if [ "${SREGISTRY_START}" == "yes" ]; then
+
+    # Globus Personal Endpoint
+  
+    if [ "${GLOBUSENABLED}" == "yes" ]; then
+
+        if [ ! -f "ls ${HOME}/.globus.cfg" ]; then
+            echo "Logging in to Globus"
+
+            globus login --no-local-server
+
+            echo "Generating Globus Personal Endpoint"
+            response=$(globus endpoint create --personal "${ROBOTNAME}")
+ 
+            # Bad party trick to get setup key, last in response
+            for token in ${response}; do token=$token;done
+            /opt/globus/globusconnectpersonal -setup "${token}"
+        fi
+
+    fi
 
     echo "Starting Registry Portal"
     echo

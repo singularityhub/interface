@@ -15,9 +15,17 @@ ENV PATH /opt/conda/bin:$PATH
 RUN mkdir /code
 RUN mkdir /data
 
-# Sregistry with pull fix
-RUN git clone https://www.github.com/singularityhub/sregistry-cli && \
-              cd sregistry-cli && python setup.py install
+# Install Globus Personal Connect
+
+WORKDIR /opt
+RUN wget https://s3.amazonaws.com/connect.globusonline.org/linux/stable/globusconnectpersonal-2.3.4.tgz && \
+    tar xzf globusconnectpersonal-2.3.4.tgz && mv globusconnectpersonal-2.3.4 globus 
+
+# Sregistry with Globus
+RUN git clone -b integration/globus https://www.github.com/vsoch/sregistry-cli && \
+              cd sregistry-cli && python setup.py install && /opt/conda/bin/pip install globus-cli
+#RUN git clone https://www.github.com/singularityhub/sregistry-cli && \
+#              cd sregistry-cli && python setup.py install
 
 WORKDIR /tmp
 RUN wget https://github.com/singularityware/singularity/releases/download/2.4.3/singularity-2.4.3.tar.gz \
@@ -44,6 +52,11 @@ RUN /opt/conda/bin/pip install --upgrade pip && \
 RUN apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Add a user for Globus
+RUN useradd -ms /bin/bash globus-user
+RUN echo "globus-user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+USER globus-user
 
 ENTRYPOINT ["/bin/bash", "/code/script/entrypoint.sh"]
 WORKDIR /code

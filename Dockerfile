@@ -37,10 +37,6 @@ RUN wget https://github.com/singularityware/singularity/releases/download/2.4.3/
 
 ADD . /code
 
-# Permissions for globus-user
-RUN chmod -R 0755 /code
-RUN chmod -R 0755 /var/log
-
 # Set up nginx
 RUN cp /code/script/nginx.conf /etc/nginx/nginx.conf && \
     cp /code/script/nginx.gunicorn.conf /etc/nginx/sites-enabled/default && \

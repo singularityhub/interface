@@ -14,7 +14,7 @@ usage () {
              --globus: enable globus login
          
           Examples:
-              docker run -d -p 80:80 --privileged -v data:/root/.singularity <container> start
+              docker run -d -p 80:80 --privileged -v data:/home/tunel-user/.singularity <container> start
          "
 }
 
@@ -64,7 +64,7 @@ if [ "${SREGISTRY_START}" == "yes" ]; then
   
     if [ "${GLOBUSENABLED}" == "yes" ]; then
 
-        if [ ! -f "ls ${HOME}/.globus.cfg" ]; then
+        if [ ! -f "$HOME/.globus.cfg" ]; then
             echo "Logging in to Globus"
 
             globus login --no-local-server
@@ -74,25 +74,41 @@ if [ "${SREGISTRY_START}" == "yes" ]; then
  
             # Bad party trick to get setup key, last in response
             for token in ${response}; do token=$token;done
+
+            # Bug with getting $USER, see https://github.com/globus/globus-cli/issues/394
+            export USER="tunel-user"
             /opt/globus/globusconnectpersonal -setup "${token}"
+
+            # Export that globus is enabled to config
+            echo "PLUGIN_GLOBUS_ENABLED=True" >> /code/tunel/config.py
+           
         fi
 
+        # Have we set up config paths yet?
+        if [ ! -f "$HOME/.globusonline/lta/config-paths" ]; then
+            echo "${HOME}/.singularity/shub,0,1" >> "${HOME}/.globusonline/lta/config-paths"
+        fi
+
+        # When configured, we can start the endpoint
+        echo "Starting Globus Connect Personal"
+        /opt/globus/globusconnectpersonal -start &
+        
     fi
 
     echo "Starting Registry Portal"
     echo
     service nginx start
-    touch /var/log/gunicorn.log
-    touch /var/log/gunicorn-access.log
-    tail -n 0 -f /var/log/gunicorn*.log &
+    touch /tmp/gunicorn.log
+    touch /tmp/gunicorn-access.log
+    tail -n 0 -f /tmp/gunicorn*.log &
 
     exec  /opt/conda/bin/gunicorn tunel.wsgi:app \
                   --bind 0.0.0.0:5000 \
                   --workers 5 \
                   --log-level=info \
                   --timeout 900 \
-                  --log-file=/var/log/gunicorn.log \
-                  --access-logfile=/var/log/gunicorn-access.log  \
+                  --log-file=/tmp/gunicorn.log \
+                  --access-logfile=/tmp/gunicorn-access.log  \
             "$@" & service nginx restart
 
     # simple manual command could be

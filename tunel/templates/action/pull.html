@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+<div class="row">
+
+<!-- SIDEBAR CONTROLS -->
+<div class="col-md-2">
+
+    <div class="row" style='margin-top:20px'>
+        <div class='col-md-12'>
+            <h3>Pull from</h3>
+            <div class="input-group">
+                <input class="form-control" 
+                       id="image-uri" 
+                       aria-describedby="image-uri-help" 
+                       placeholder="Enter image uri">
+                <small id="image-uri-help"
+                       class="form-text text-muted">unique resource identifier</small>
+                <span class="input-group-btn">
+                    <button class="btn btn-default" 
+                            id="pull_button" 
+                            style="margin-bottom: 20px; height: 34px;"
+                            type="button" tabindex="-1">Pull</button>
+                </span>
+           </div>
+        </div>
+        <div class="col-md-12" style="margin-top:30px">
+               <span class="label label-info">
+                    <a href="/settings" style='color:white;'>Settings</a>
+               </span>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class='col-md-12'>
+
+            <div class="btn-group-vertical btn-group-toggle" style="width:100%" data-toggle="buttons">
+                <label class="btn btn-info active">
+                    <input endpoint='docker://' id="docker" name='pull-source' autocomplete="off" type="radio" checked>Docker Hub
+                </label>
+                <label class="btn btn-info" id="nvidia">
+                {% if nvidia %}
+                    <input endpoint='nvidia://' id="nvidia" name='pull-source' autocomplete="off" type="radio">Nvidia Cloud
+                {% else %}
+                    <input endpoint='nvidia://' id="nvidia" name='pull-source' autocomplete="off" type="radio" disabled>Nvidia Cloud
+                {% endif %}
+                </label>
+                <label class="btn btn-info">
+                    <input endpoint='shub://' name='pull-source' id="shub" autocomplete="off" type="radio">Singularity Hub
+                </label>
+           </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+        {% include "sidebar.html" %}
+        </div>
+    </div>
+
+</div>
+
+<div class="col-md-10">
+    <div class="row" style="padding-top:35px">
+      {% include "terminal.html" %}
+    </div>
+    <div class="row">
+       <div class="alert alert-info col-md-12" style="font-weight:800;font-style:uppercase;text-align:center" id="box">STATE IS IDLE</div>
+    </div>
+    <p id="messages" style="display:none" class="alert alert-info"></p>
+
+</div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+
+        {% if nvidia %}{% else %}
+          $("#nvidia").click(function(){
+              $('#messages').html("You must add a token in <a href='/settings'>settings</a> to use this endpoint. If you've already done this, try disabling your ad blocker to enable cookies.")
+              $('#messages').show();
+          });
+        {% endif %}
+
+        $("#pull_button").click(function(){
+
+            var endpoint = $('.btn-group-vertical > .btn.active > input').attr('endpoint');
+            var uri = $('#image-uri').val();
+            var url =  "/action/pull?q=" + uri + '&uri=' + endpoint;
+
+            if (uri != "") {
+                console.log(url)
+
+                var prompt = $('.prompt')
+                var xhr = new XMLHttpRequest()
+                xhr.open("GET", url , true)
+
+                $("#box").removeClass("alert-info") 
+                $("#box").text("RUNNING") 
+                $("#box").addClass("alert-warning")
+ 
+                // On finish, reload page
+                xhr.onloadend = function () {
+                    var prompt = $('.prompt')
+                    $("#box").removeClass("alert-warning") 
+                    $("#box").text("DONE") 
+                    $("#box").addClass("alert-success")
+                    var containers = "<a href='/'><button class='btn btn-info'>View Containers</button></a>"
+                    $('.history').append( "<span class='gray'>"+ containers +"</span><br>");
+
+                }
+
+                // First message to user
+                prompt.typed({
+                    strings: ["Pulling " + uri + '... (see docker logs for progress)...'],
+                    typeSpeed: 1,
+                })
+
+                // Update user with dialog
+                xhr.onprogress = function () {
+
+                    var message = xhr.responseText.replace('\n','<br>');
+                    var lines = message.split('\n')
+                    $('.typed-cursor').text('');
+
+                    $.each(lines, function(e,line){
+                        var line = "<span class='gray'>" + line + "</span><br>"
+                        $('.history').append(line);
+
+                    })
+                    prompt.html('');
+                    $('section.terminal').scrollTop($('section.terminal').height());
+                }
+                xhr.send()
+            } else {
+                $('.history').html('$ Please enter a valid unique resource identifier (uri) <br>');
+            }
+
+        })
+    </script>
+{% endblock %}

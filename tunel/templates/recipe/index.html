@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/generator.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="perspective effect-rotate-left">
+  <div class="outer-nav--return"></div>
+    <div id="viewport" class="l-viewport">
+      <div class="l-wrapper">
+        <header class="header">
+          <a class="header--logo" href="#0">
+            <p><span style='color:#e32929'>Container</span>Maker</p>
+            <p class="alert alert-info">What do you want this to look like? 
+               <a href="https://www.github.com/singularityhub/interface/issues" target="_blank">Let us know</a></p>
+          </a>
+        </header>
+        <nav class="l-side-nav">
+          <ul class="side-nav">
+            <li class="is-active"><span>Singularity</span></li>
+            <li id='docker-section'><span>Docker</span></li>
+            <li><span>Home</span></li>
+          </ul>
+        </nav>
+
+        <ul class="l-main-content main-content">
+          <li class="l-section section section--is-active" id='singularity-section'>
+            <div class="work">
+              <h2>Your Recipe</h2>
+
+                 <!-- Singularity Form-->
+                 <form id="singularity-form" action="{{ url_for('generator') }}" method="post">
+                      <div class="form-group">
+                          <label for="content" id='recipe-content'>Singularity</label>
+                          <textarea name="content" 
+                                    class="form-control" 
+                                    style="height:300px" 
+                                    id="content" rows="300">{{ recipes['singularity'] }}</textarea>
+                          <input type="hidden" name="recipe-kind" value="singularity"/>
+                          <hr>
+                          <button type="submit" id="singularity" class="btn btn-secondary submit-form">Convert</button>
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                      </div>
+                  </form>
+
+                <img src="{{ url_for('static', filename='img/robot.png') }}" 
+                     width="200px" 
+                     style="float:right"
+                     alt="Recipe Time!">
+          </div>
+          </li>
+          <li class="l-section section" data-type='docker'>
+            <div class="work">
+              <h2>Your Recipe</h2>
+
+                 <!-- Docker Form -->
+                 <form id="docker-form" action="{{ url_for('generator') }}" method="post">
+                  <div class="form-group">
+                      <label for="content" 
+                             id='recipe-content'>Dockerfile</label>
+                      <input type="hidden" name="recipe-kind" value="docker"/>
+                      <textarea name="content"
+                                class="form-control" 
+                                style="height:300px" id="content" rows="300">{{ recipes['docker'] }}</textarea>
+                      <hr>
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                      <button type="submit" id="docker" class="btn btn-secondary submit-form">Convert</button>
+
+                  </form>
+                  </div>
+            </div>
+          </li>
+          <li class="l-section section">
+            <div class="work">
+              <h2>Back to It!</h2>
+                 <div class="row">
+                     <div class="col-md-12">
+                     {% include "sidebar.html" %}
+                     </div>
+                 </div>
+               </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/generator-functions.js') }}"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+      console.log('<3');
+      if ('{{ recipetype }}' == 'docker' ){
+         $('li#docker-section').click();
+      }
+    });
+    </script>
+{% endblock %}

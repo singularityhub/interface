@@ -1,0 +1,22 @@
+<a href="/"><button class="btn btn-default btn-xl question_button">Containers</button></a>
+<a href="/pull"><button class="btn btn-default btn-xl question_button">Pull Containers</button></a>
+<a href="/recipe"><button class="btn btn-default btn-xl question_button">Recipe Generator</button></a>
+ <hr>
+ {% if images %}
+ <div class="input-group">
+     <select class="form-control" style="height:38px" id="container" name="container">
+     {% for container in images %}    
+<option value="{{ container.name }}">{{ container.uri }}</option>
+     {% endfor %}
+     </select>   
+     <span class="input-group-btn">
+<button class="btn btn-default" type="button" tabindex="-1">View</button>
+     </span>
+ </div>
+ {% endif %}
+
+ <img name="robot" 
+      onMouseOver="document.robot.src='{{ url_for('static', filename='img/robot-blinking.png') }}';" 
+      onMouseOut="document.robot.src='{{ url_for('static', filename='img/robot.png') }}';"
+      style="width:250px; margin-left:30px" 
+      src="{{ url_for('static', filename='img/robot.png') }}">

@@ -1,0 +1,126 @@
+{% extends "main/main.html" %}
+
+{% block sidebar %}
+<div style="margin-top:55px" class="row">
+</div>
+{% endblock %}
+
+{% block main %}
+<div class="row">
+    <h3>Globus Endpoints</h3>
+    <div class="row" style='margin-top:20px'>
+        <div class='col-md-12'>
+            <div class="input-group">
+                <input class="form-control" 
+                       id="endpoint_term" 
+                       aria-describedby="endpoint_term_help" 
+                       placeholder="Stanford">
+                <span class="input-group-btn">
+                <button class="btn btn-default" 
+                        id="search_button" 
+                        style="margin-bottom: 20px; height: 34px;"
+                        type="button" tabindex="-1"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if endpoints %}
+<div class="row">
+    <table id="label_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>endpoint ID</th>
+            <th>scope</th>
+            <th>name</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>endpoint ID</th>
+            <th>scope</th>
+            <th>name</th>
+        </tr>
+    </tfoot>
+    <tbody>
+        {% for endpoint in endpoints %}
+            <tr>
+                <td><a href="/globus/{{ endpoint[0] }}">{{ endpoint[0] }}</td></a>
+                <td><span style="color:darkorchid">{{ endpoint[1] }}</td>
+                <td>{{ endpoint[2] }}</td>
+            </tr>
+            {% endfor %}
+    </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+
+        $("#search_button").click(function(){
+
+            // Stopped here - restart image, test view, 
+            // Have logic here to test which button was clicked,
+            // then for each of search and pull
+            // create backend function to handle and return sregistry result
+            // We probably don't need the terminal :)
+ 
+            // to do 
+            var endpoint = $('.btn-group-vertical > .btn.active > input').attr('endpoint');
+            var uri = $('#image-uri').val();
+            var url =  "/action/pull?q=" + uri + '&uri=' + endpoint;
+
+            if (uri != "") {
+                console.log(url)
+
+                var prompt = $('.prompt')
+                var xhr = new XMLHttpRequest()
+                xhr.open("GET", url , true)
+
+                $("#box").removeClass("alert-info") 
+                $("#box").text("RUNNING") 
+                $("#box").addClass("alert-warning")
+ 
+                // On finish, reload page
+                xhr.onloadend = function () {
+                    var prompt = $('.prompt')
+                    $("#box").removeClass("alert-warning") 
+                    $("#box").text("DONE") 
+                    $("#box").addClass("alert-success")
+                    var containers = "<a href='/'><button class='btn btn-info'>View Containers</button></a>"
+                    $('.history').append( "<span class='gray'>"+ containers +"</span><br>");
+
+                }
+
+                // First message to user
+                prompt.typed({
+                    strings: ["Pulling " + uri + '... (see docker logs for progress)...'],
+                    typeSpeed: 1,
+                })
+
+                // Update user with dialog
+                xhr.onprogress = function () {
+
+                    var message = xhr.responseText.replace('\n','<br>');
+                    var lines = message.split('\n')
+                    $('.typed-cursor').text('');
+
+                    $.each(lines, function(e,line){
+                        var line = "<span class='gray'>" + line + "</span><br>"
+                        $('.history').append(line);
+
+                    })
+                    prompt.html('');
+                    $('section.terminal').scrollTop($('section.terminal').height());
+                }
+                xhr.send()
+            } else {
+                $('.history').html('$ Please enter a valid unique resource identifier (uri) <br>');
+            }
+
+        })
+    </script>
+{% endblock %}

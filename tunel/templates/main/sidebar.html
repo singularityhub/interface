@@ -1,7 +1,22 @@
-<a href="/"><button class="btn btn-default btn-xl question_button">Containers</button></a>
-<a href="/pull"><button class="btn btn-default btn-xl question_button">Pull Containers</button></a>
-<a href="/recipe"><button class="btn btn-default btn-xl question_button">Recipe Generator</button></a>
- <hr>
+<div style='margin-bottom:50px'>
+    <a href="/"><button class="btn btn-default btn-xl question_button">Containers</button></a>
+    <a href="/pull"><button class="btn btn-default btn-xl question_button">Pull Containers</button></a>
+    <a href="/recipe"><button class="btn btn-default btn-xl question_button">Recipe Generator</button></a>
+    <hr>
+</div>
+{% if plugins %}
+<div style='margin-bottom:30px'>
+    <small>plugins</small>
+    {% for plugin in plugins %}
+    {% if plugin == activeplugin %}
+    <a href="/{{ plugin }}"><button class="btn btn-info btn-xl question_button">{{ plugin }}</button></a>
+    {% else %}
+    <a href="/{{ plugin }}"><button class="btn btn-default btn-xl question_button">{{ plugin }}</button></a>
+    {% endif %}
+    {% endfor %}
+    <hr>
+</div>
+{% endif %}
  {% if images %}
  <div class="input-group">
      <select class="form-control" style="height:38px" id="container" name="container">
@@ -18,5 +33,5 @@
  <img name="robot" 
       onMouseOver="document.robot.src='{{ url_for('static', filename='img/robot-blinking.png') }}';" 
       onMouseOut="document.robot.src='{{ url_for('static', filename='img/robot.png') }}';"
-      style="width:100%; margin-left:30px" 
+      style="width:100%;" 
       src="{{ url_for('static', filename='img/robot.png') }}">

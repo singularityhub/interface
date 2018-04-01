@@ -9,17 +9,23 @@
     <div class="row">
 
         <!-- SIDEBAR CONTROLS -->
-        <div class="col-md-2" style="margin-bottom:20px">
+        <div class="col-md-2">
             {% block sidebar %}{% endblock %}
-            <div class="row">
+            <div class="row" style='margin-top:30px;'>
+
+                <!-- small blue buttons -->
                 <div class="col-md-12">
+                 <span class="label label-info">
+                    <a href="/settings" style='color:white;'>Settings</a>
+                 </span>
+
                 {% include "main/sidebar.html" %}
                 </div>
             </div>
         </div>
 
         <!-- Main Content -->
-        <div class="col-md-10">
+        <div class="col-md-9">
             <div class="row" style="padding-top:35px">
                 <div class="col-md-12">
                 {% block main %}{% endblock %}

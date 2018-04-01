@@ -28,34 +28,28 @@ from flask import (
     jsonify
 )
 
-from flask_wtf.csrf import generate_csrf
-from flask_cors import cross_origin
-from werkzeug import secure_filename
-
 from tunel.server import app
-from tunel.views.plugins import generate_plugins
 
+import logging
 import os
-import pwd
 import json
 
 
-# SECURITY #####################################################################
+@app.route('/globus/<endpoint_id>')
+def get_endpoint(endpoint_id):
 
-@app.after_request
-def inject_csrf_token(response):
-    response.headers.set('X-CSRF-Token', generate_csrf())
-    return response
-  
+    from sregistry.main import get_client
+    client = get_client('globus://')
+    endpoint = client._list_endpoints(endpoint_id)
+    return render_template('plugins/globus/index.html', endpoints=endpoints,
+                                                        activeplugin="globus")
 
-# PLUGINS #####################################################################
-@app.context_processor
-def add_plugins():
-    return dict(plugins=generate_plugins())
+@app.route('/globus')
+def globus():
 
-# Main #########################################################################
-
-@app.route('/')
-def index():
-    images = app.sregistry.images()
-    return render_template('main/index.html', images=images)
+    # Default globus should show endpoints
+    from sregistry.main import get_client
+    client = get_client('globus://')
+    endpoints = client._list_endpoints()
+    return render_template('plugins/globus/index.html', endpoints=endpoints,
+                                                        activeplugin="globus")

@@ -1,4 +1,4 @@
-from .actions import *
+from .action import *
 from .api import *
 from .main import *
 from .plugins import *

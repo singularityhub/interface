@@ -64,6 +64,9 @@ if [ "${SREGISTRY_START}" == "yes" ]; then
   
     if [ "${GLOBUSENABLED}" == "yes" ]; then
 
+        # Bug with getting $USER, see https://github.com/globus/globus-cli/issues/394
+        export USER="tunel-user"
+
         if [ ! -f "$HOME/.globus.cfg" ]; then
             echo "Logging in to Globus"
 
@@ -74,9 +77,6 @@ if [ "${SREGISTRY_START}" == "yes" ]; then
  
             # Bad party trick to get setup key, last in response
             for token in ${response}; do token=$token;done
-
-            # Bug with getting $USER, see https://github.com/globus/globus-cli/issues/394
-            export USER="tunel-user"
             /opt/globus/globusconnectpersonal -setup "${token}"
 
             # Export that globus is enabled to config

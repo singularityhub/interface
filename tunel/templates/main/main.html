@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- SIDEBAR CONTROLS -->
+        <div class="col-md-2" style="margin-bottom:20px">
+            {% block sidebar %}{% endblock %}
+            <div class="row">
+                <div class="col-md-12">
+                {% include "main/sidebar.html" %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-10">
+            <div class="row" style="padding-top:35px">
+                <div class="col-md-12">
+                {% block main %}{% endblock %}
+                </div>
+            </div>
+            <p id="messages" style="display:none" class="alert alert-info"></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

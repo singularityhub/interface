@@ -34,17 +34,10 @@ from werkzeug import secure_filename
 
 from tunel.server import app
 
-import logging
 import os
 import pwd
 import json
 
-
-# LOGGING ######################################################################
-
-file_handler = logging.FileHandler("/home/tunel-user/tunel-server.log")
-app.logger.addHandler(file_handler)
-app.logger.setLevel(logging.DEBUG)
 
 # SECURITY #####################################################################
 

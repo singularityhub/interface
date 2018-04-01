@@ -48,6 +48,7 @@ RUN cp /code/script/nginx.conf /etc/nginx/nginx.conf && \
 RUN /opt/conda/bin/pip install --upgrade pip && \
     /opt/conda/bin/pip install globus-cli && \
     /opt/conda/bin/pip install -r /code/requirements.txt
+    /opt/conda/bin/python setup.py install
 
 # Install HPC Container Maker
 #RUN git clone https://github.com/NVIDIA/hpc-container-maker.git && cd hpc-container-maker && python setup.py install

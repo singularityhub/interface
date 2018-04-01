@@ -26,6 +26,14 @@ $ docker inspect tunel
 $ docker restart tunel
 ```
 
+If you want to authenticate with globus and enable your container as an
+endpoint:
+
+```
+$ docker run -d -p 80:80 --privileged -v data:/root vanessa/tunel start --globus
+```
+
+
 ## Usage
 You can use the container directly from Docker Hub. 
 

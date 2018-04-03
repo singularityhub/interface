@@ -28,6 +28,7 @@ from flask import (
     jsonify
 )
 
+from sregistry.main import get_client
 from tunel.server import app
 
 import logging
@@ -37,19 +38,56 @@ import json
 
 @app.route('/globus/<endpoint_id>')
 def get_endpoint(endpoint_id):
-
-    from sregistry.main import get_client
+    '''return a single endpoint that matches the result of a query, meaning
+       a detail page that shows files within. This should be an endpoint
+       detail page (not sure how should look)
+    '''
     client = get_client('globus://')
-    endpoint = client._list_endpoints(endpoint_id)
-    return render_template('plugins/globus/index.html', endpoints=endpoints,
+
+    # Option 2: An endpoint without query will just list containers there
+    endpoint = client._list_endpoint(endpoint_id)
+    return render_template('plugins/globus/index.html', endpoints=[endpoint],
                                                         activeplugin="globus")
 
 @app.route('/globus')
 def globus():
+    '''the main globus view that lists all endpoints the user has shared with
+       them, or owns.
+    '''
+    # Option 1: No query or endpoints lists all shared and personal
+    return endpoint_table()
+
+
+
+@app.route('/globus', methods=['POST'])
+def search_endpoints():
+    '''search endpoints with a term, also returning the user "my-endpoints"
+       and "shared-with-me" scope
+    ''''
+    # Default globus should show endpoints
+    client = get_client('globus://')
+
+    term = None
+    if request.method == "POST":
+        term = request.form.get('term')
+
+    # Return the endpoints for the user
+    return endpoint_table(term)
+
+
+
+def endpoint_table(term=None):
+    '''common view to return endpoints with table
+    
+       Parameters
+       ==========
+       term: a search term to query the table, or None to show all endpoints
+       in the user's shared-with-me or my-endpoints
+    '''
 
     # Default globus should show endpoints
-    from sregistry.main import get_client
     client = get_client('globus://')
-    endpoints = client._list_endpoints()
+    endpoints = client._list_endpoints(term)
     return render_template('plugins/globus/index.html', endpoints=endpoints,
                                                         activeplugin="globus")
+

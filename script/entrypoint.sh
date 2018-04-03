@@ -73,10 +73,9 @@ if [ "${SREGISTRY_START}" == "yes" ]; then
             globus login --no-local-server
 
             echo "Generating Globus Personal Endpoint"
-            response=$(globus endpoint create --personal "${ROBOTNAME}")
+            token=$(globus endpoint create --personal "${ROBOTNAME}" --jmespath 'globus_connect_setup_key'  | tr -d '"') 
  
             # Bad party trick to get setup key, last in response
-            for token in ${response}; do token=$token;done
             /opt/globus/globusconnectpersonal -setup "${token}"
 
             # Export that globus is enabled to config

@@ -6,4 +6,5 @@ _site
 data/
 dist
 OLD
+pypi.sh
 __pycache__

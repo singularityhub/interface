@@ -44,8 +44,6 @@ def action_pull():
     '''the fetch view to perform the pull, and return a response
     '''
 
-    from shelljob import proc
-
     # Ensure uri appears once
 
     container = request.args.get('q')

@@ -1,15 +1,20 @@
 {% extends "main/main.html" %}
 
+
 {% block sidebar %}
 <div style="margin-top:55px" class="row">
 </div>
 {% endblock %}
 
 {% block main %}
+
+<!-- Only show search form if logged in-->
+{% if auth_uri %}{% else %}
 <div class="row">
     <h3>Globus Endpoints</h3>
     <div class="row" style='margin-top:20px'>
         <div class='col-md-12'>
+
             <div class="input-group">
                 <input class="form-control" 
                        id="endpoint_term" 
@@ -25,6 +30,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 {% if endpoints %}
 <div class="row">
@@ -55,11 +61,46 @@
     </table>
 </div>
 {% endif %}
+
+{% if auth_uri %}
+<!-- Needs to authenticate with code -->
+<div class="row">
+    <div class="col-md-2" style="margin:auto; margin-top:15%">
+
+       <div id='login-section' style='display:none'>
+            <img style="margin:auto;margin-bottom:20px; width:100%" src="{{ url_for('static', filename='img/plugin-globus.png') }}">
+            <form class="form" action="/globus" role="form" autocomplete="off" id="formLogin" novalidate="" method="POST">
+            <div class="form-group login-section" style="display-none">
+                <input type="text" 
+                       placeholder="enter code" 
+                       class="form-control form-control-lg rounded-0" name="code" id="code" required="">
+            </div>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <button type="submit" 
+                    id="login-button"
+                    class="login-section btn btn-info float-right">Login</button>
+            </form>
+          </div>
+          <a href="{{ auth_uri | safe }}" target="_blank">
+          <button type="button"
+                  id="code-button"
+                  class="btn btn-primary" style='width:100%'>Globus Login
+          </button></a>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
     <script type="text/javascript">
 
+        {% if auth_uri %}
+        $("#code-button").click(function(){
+           $("#code-button").hide();
+           $("#login-section").show();
+        });
+        {% else %}
         $("#search_button").click(function(){
 
             // Stopped here - restart image, test view, 
@@ -122,5 +163,6 @@
             }
 
         })
+        {% endif %}
     </script>
 {% endblock %}

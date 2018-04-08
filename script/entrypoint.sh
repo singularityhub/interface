@@ -19,8 +19,10 @@ usage () {
 }
 
 SREGISTRY_START="no"
-ROBOTNAME="sregistry-$(python /code/script/robotnamer.py)"
+ROBOTNAME=$(python /code/script/robotnamer.py)
+ENDPOINT="sregistry-${ROBOTNAME}"
 GLOBUSENABLED="no"
+export ROBOTNAME
 
 if [ $# -eq 0 ]; then
     usage
@@ -60,6 +62,7 @@ done
 
 if [ "${SREGISTRY_START}" == "yes" ]; then
 
+
     # Globus Personal Endpoint
   
     if [ "${GLOBUSENABLED}" == "yes" ]; then
@@ -73,13 +76,12 @@ if [ "${SREGISTRY_START}" == "yes" ]; then
             globus login --no-local-server
 
             echo "Generating Globus Personal Endpoint"
-            token=$(globus endpoint create --personal "${ROBOTNAME}" --jmespath 'globus_connect_setup_key'  | tr -d '"') 
- 
-            # Bad party trick to get setup key, last in response
+            token=$(globus endpoint create --personal "${ENDPOINT}" --jmespath 'globus_connect_setup_key'  | tr -d '"') 
             /opt/globus/globusconnectpersonal -setup "${token}"
 
             # Export that globus is enabled to config
             echo "PLUGIN_GLOBUS_ENABLED=True" >> /code/tunel/config.py
+            echo "ROBOTNAME='${ROBOTNAME}'" >> /code/tunel/config.py
            
         fi
 

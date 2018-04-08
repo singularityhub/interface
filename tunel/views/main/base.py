@@ -38,7 +38,7 @@ from tunel.views.plugins import generate_plugins
 import os
 import pwd
 import json
-
+import logging
 
 # SECURITY #####################################################################
 
@@ -46,9 +46,17 @@ import json
 def inject_csrf_token(response):
     response.headers.set('X-CSRF-Token', generate_csrf())
     return response
-  
+
+
+# LOGGING #####################################################################
+
+name = app.config.get('ROBOTNAME')
+file_handler = logging.FileHandler("/tmp/tunel-server-%s.log" %name)
+app.logger.addHandler(file_handler)
+app.logger.setLevel(logging.DEBUG)  
 
 # PLUGINS #####################################################################
+
 @app.context_processor
 def add_plugins():
     return dict(plugins=generate_plugins())

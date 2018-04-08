@@ -45,9 +45,10 @@ RUN cp /code/script/nginx.conf /etc/nginx/nginx.conf && \
     chmod u+x /code/script/generate_key.sh && \
     /bin/bash /code/script/generate_key.sh /code/tunel/config.py
 
+WORKDIR /code
 RUN /opt/conda/bin/pip install --upgrade pip && \
     /opt/conda/bin/pip install globus-cli && \
-    /opt/conda/bin/pip install -r /code/requirements.txt
+    /opt/conda/bin/pip install -r /code/requirements.txt && \
     /opt/conda/bin/python setup.py install
 
 # Install HPC Container Maker

@@ -45,9 +45,10 @@ class TunelServer(Flask):
         super(TunelServer, self).__init__(*args, **kwargs)
         self.sregistry = Client
 
+# STOPPED HERE - need to make sure correct client id is passed through for app
+
 app = TunelServer(__name__)
 app.config.from_object('tunel.config')
-
 
 # CORS #########################################################################
 

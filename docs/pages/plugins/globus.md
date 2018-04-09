@@ -21,7 +21,7 @@ You would then want to authenticate your container to access your endpoints.
 $ docker exec -it tunel python /code/script/update_tokens.py globus
 ```
 
-### Updating Credentials
+## Updating Credentials
 You might hit a time when your credentials need to be updated! If so, you will
 see instructions in the interface.
 
@@ -33,7 +33,7 @@ a table of endpoints under scope `my-endpoints` and `shared-with-me`.
 
 ![img/globus-endpoints.png](img/globus-endpoints.png)
 
-
+### Commands
 To update your tokens, the easiest way is to issue a command to the docker
 container on the command line. A url will be returned that you can open and then
 copy paste the code back into the terminal:

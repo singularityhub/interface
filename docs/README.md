@@ -47,7 +47,7 @@ to our interaction with containers. There will likely be many changes in the str
 
 ## Plugins
 
- - [Globus](/plugin-globus): Connect your tunel to Globus to transfer images to and from your Globus endpoints.
+ - [Globus](/interface/plugin-globus): Connect your tunel to Globus to transfer images to and from your Globus endpoints.
 
 
 ## Getting Help

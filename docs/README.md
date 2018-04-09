@@ -45,6 +45,10 @@ to our interaction with containers. There will likely be many changes in the str
  - [Quick Start](/interface/quick-start): A quick start guide to getting your Tunel up and running!
  - [Development](/interface/development): Helpful commands for development and debugging.
 
+## Plugins
+
+ - [Globus](/plugin-globus): Connect your tunel to Globus to transfer images to and from your Globus endpoints.
+
 
 ## Getting Help
 This is an open source project. Please contribute to the package, or post feedback and questions as <a href="https://github.com/singularityhub/interface" target="_blank">issues</a>. You'll notice a little eliipsis (<i class="fa fa-ellipsis-h"></i>) next to each header section. If you click this, you can open an issue relevant to the section, grab a permalink, or suggest a change. You can also talk to us directly on Gitter.

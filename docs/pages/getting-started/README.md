@@ -27,11 +27,19 @@ $ docker restart tunel
 ```
 
 If you want to authenticate with globus and enable your container as an
-endpoint:
+endpoint, start with the --globus flag to create the endpoint.
 
 ```
-$ docker run -d -p 80:80 --privileged -v data:/root vanessa/tunel start --globus
+$ docker run --name tunel -d -p 80:80 --privileged -v data:/root vanessa/tunel start --globus
 ```
+
+And then authenticate your container to access your endpoints.
+
+```
+$ docker exec -it tunel python /code/script/update_tokens.py globus
+```
+
+See more about globus in the [Globus plugin](/interface/plugin-globus) documentation page.
 
 
 ## Usage

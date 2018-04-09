@@ -1,0 +1,22 @@
+# Setup
+title:        Tunel, interface for container management
+tagline:      ""
+baseurl:      "/interface"
+github:       "https://www.github.com/singularityhub/interface"
+
+# About/contact
+author:
+  name:       Vanessa Sochat
+  url:        https://singularityhub.github.io/interface
+
+# Defaults
+defaults:
+  -
+    scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+
+#Others
+markdown: kramdown

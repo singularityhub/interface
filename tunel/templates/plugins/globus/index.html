@@ -14,17 +14,19 @@
     <h3>Globus Endpoints</h3>
     <div class="row" style='margin-top:20px'>
         <div class='col-md-12'>
-
+            <form id="term-search-form" action="{{ url_for('globus') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="input-group">
                 <input class="form-control" 
+                       name="term"
                        id="endpoint_term" 
                        aria-describedby="endpoint_term_help" 
-                       placeholder="Stanford">
+                       placeholder="{% if term %}{{ term | capitalize }}{% else %}Stanford{% endif %}">
                 <span class="input-group-btn">
                 <button class="btn btn-default" 
                         id="search_button" 
                         style="margin-bottom: 20px; height: 34px;"
-                        type="button" tabindex="-1"><i class="fa fa-search"></i></button>
+                        type="submit" tabindex="-1"><i class="fa fa-search"></i></button>
                 </span>
             </div>
         </div>
@@ -39,26 +41,40 @@
     <thead>
         <tr>
             <th>endpoint ID</th>
+            <th></th>
             <th>scope</th>
             <th>name</th>
+            <th>email</th>
+            <th>organization</th>
         </tr>
     </thead>
     <tfoot>
         <tr>
             <th>endpoint ID</th>
+            <th></th>
             <th>scope</th>
             <th>name</th>
+            <th>email</th>
+            <th>organization</th>
         </tr>
     </tfoot>
     <tbody>
         {% for endpoint in endpoints %}
             <tr class="tableRow">
-                <td data-search="{{ endpoint[0] }}">
-                    <a href="/globus/{{ endpoint[0] }}" class="searchme">{{ endpoint[0] }}</td></a>
-                <td data-search="{{ endpoint[1] }}"><span style="color:darkorchid" class="searchme">{{ endpoint[1] }}</span></td>
-                <td class="searchme" data-search="{{ endpoint[2] }}">{{ endpoint[2] }}</td>
+                <td data-search="{{ endpoint.id }}">
+                    {% if endpoint.active %}<a href="/globus/{{ endpoint.id }}">{{ endpoint.id }}</a>{% else %}{{ endpoint.id }}{% endif %}
+                </td>
+                <td data-search="{{ endpoint.active }} {{ endpoint.gc }}">
+                      {% if endpoint.active %}<span class="label label-success">active</span>{% endif %}
+                      {% if endpoint.gc %}<span class="label label-primary">globus connect</span>{% endif %}                  
+                      {% if endpoint.public %}<span class="label label-primary">public</span>{% endif %}            
+                </td>
+                <td data-search="{{ endpoint.kind }}">{{ endpoint.kind }}</td>
+                <td data-search="{{ endpoint.name }}">{{ endpoint.name }}</td>
+                <td {% if endpoint.email %}data-search="{{ endpoint.email }}"{% endif %}>{% if endpoint.email %}{{ endpoint.email }}{% endif %}</td>
+                <td {% if endpoint.org %}data-search="{{ endpoint.org }}"{% endif %}>{% if endpoint.org %}{{ endpoint.org }}{% endif %}</td>
             </tr>
-            {% endfor %}
+        {% endfor %}
     </tbody>
     </table>
 </div>
@@ -115,69 +131,6 @@
                 })                
             }
          }
-
-        $("#search_button").click(function(){
-
-            // Stopped here - restart image, test view, 
-            // Have logic here to test which button was clicked,
-            // then for each of search and pull
-            // create backend function to handle and return sregistry result
-            // We probably don't need the terminal :)
- 
-            // to do 
-            var endpoint = $('.btn-group-vertical > .btn.active > input').attr('endpoint');
-            var uri = $('#image-uri').val();
-            var url =  "/action/pull?q=" + uri + '&uri=' + endpoint;
-
-            if (uri != "") {
-                console.log(url)
-
-                var prompt = $('.prompt')
-                var xhr = new XMLHttpRequest()
-                xhr.open("GET", url , true)
-
-                $("#box").removeClass("alert-info") 
-                $("#box").text("RUNNING") 
-                $("#box").addClass("alert-warning")
- 
-                // On finish, reload page
-                xhr.onloadend = function () {
-                    var prompt = $('.prompt')
-                    $("#box").removeClass("alert-warning") 
-                    $("#box").text("DONE") 
-                    $("#box").addClass("alert-success")
-                    var containers = "<a href='/'><button class='btn btn-info'>View Containers</button></a>"
-                    $('.history').append( "<span class='gray'>"+ containers +"</span><br>");
-
-                }
-
-                // First message to user
-                prompt.typed({
-                    strings: ["Pulling " + uri + '... (see docker logs for progress)...'],
-                    typeSpeed: 1,
-                })
-
-                // Update user with dialog
-                xhr.onprogress = function () {
-
-                    var message = xhr.responseText.replace('\n','<br>');
-                    var lines = message.split('\n')
-                    $('.typed-cursor').text('');
-
-                    $.each(lines, function(e,line){
-                        var line = "<span class='gray'>" + line + "</span><br>"
-                        $('.history').append(line);
-
-                    })
-                    prompt.html('');
-                    $('section.terminal').scrollTop($('section.terminal').height());
-                }
-                xhr.send()
-            } else {
-                $('.history').html('$ Please enter a valid unique resource identifier (uri) <br>');
-            }
-
-        })
         {% endif %}
     </script>
 {% endblock %}

@@ -47,6 +47,8 @@ def get_endpoint(endpoint_id):
        a detail page that shows files within. This should be an endpoint
        detail page (not sure how should look)
     '''
+    import pickle
+    pickle.dump(endpoint_id, open('ep.pkl','wb'))
     return endpoint_table(endpoint_id=endpoint_id)
 
 
@@ -88,7 +90,7 @@ def globus(term=None, needs_update=True, endpoints=None):
     init_globus_client()
 
     if request.method == "POST":
-        term = request.form.get('term')
+        term = request.form.get('term') or None
         
     # Check if client tokens need an update
 
@@ -96,8 +98,20 @@ def globus(term=None, needs_update=True, endpoints=None):
 
         # needs_update will prompt the user to issue update command
         needs_update = False
-        endpoints = app.globus_client._list_endpoints(term)
-    
+
+        # If the user has provided a query, only return those with scope "all"
+        scopes = None
+        if term is not None:
+            scopes = "all"
+
+        # Dictionary of endpoints, keys are scope
+        endpoints = app.globus_client._get_endpoints(term)
+        endpoints = parse_endpoints(endpoints, scopes=scopes)
+
+        # If no endpoints, tell user no results
+        if len(endpoints) == 0 and term:
+            term = "No results for %s" %term
+
     return render_template('plugins/globus/index.html', term=term, 
                                                         endpoints=endpoints,
                                                         needs_update=needs_update,
@@ -106,6 +120,38 @@ def globus(term=None, needs_update=True, endpoints=None):
 
 
 # Helpers
+
+def parse_endpoints(endpoints, scopes=None):
+    '''parse endpoints into a table. If no scope provided, use all.
+
+       Parameters
+       ==========
+       endpoints: dictionary of endpoints, keys are scope, values list of ep.
+       scopes: list of keys for endpoints. If None, use all
+
+       row:
+       [id][scope][display_name][contact_email][organization]     
+    '''
+    if scopes is None:
+        scopes = list(endpoints.keys())
+
+    rows = []
+    for kind,eps in endpoints.items():
+        if kind in scopes:
+            for epid,epmeta in eps.items():  
+               name = epmeta['display_name'] or epmeta['canonical_name']
+               row = {'id': epid,
+                      'kind': kind,
+                      'name': name,
+                      'email': epmeta['contact_email'],
+                      'org': epmeta['organization'],
+                      'active': epmeta['activated'],
+                      'public': epmeta['public'],
+                      'gc': epmeta['is_globus_connect']}
+
+               rows.append(row)
+    return rows
+
 
 def init_globus_client():
     '''return a globus client with an up to date credential, or update. If the

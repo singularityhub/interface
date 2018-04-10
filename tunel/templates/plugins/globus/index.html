@@ -34,6 +34,7 @@
 
 {% if endpoints %}
 <div class="row">
+    <input type="text" id="searchInput" onkeyup="tableSearch()" style="margin-bottom:10px" placeholder="Search names...">
     <table id="label_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
     <thead>
         <tr>
@@ -51,10 +52,11 @@
     </tfoot>
     <tbody>
         {% for endpoint in endpoints %}
-            <tr>
-                <td><a href="/globus/{{ endpoint[0] }}">{{ endpoint[0] }}</td></a>
-                <td><span style="color:darkorchid">{{ endpoint[1] }}</td>
-                <td>{{ endpoint[2] }}</td>
+            <tr class="tableRow">
+                <td data-search="{{ endpoint[0] }}">
+                    <a href="/globus/{{ endpoint[0] }}" class="searchme">{{ endpoint[0] }}</td></a>
+                <td data-search="{{ endpoint[1] }}"><span style="color:darkorchid" class="searchme">{{ endpoint[1] }}</span></td>
+                <td class="searchme" data-search="{{ endpoint[2] }}">{{ endpoint[2] }}</td>
             </tr>
             {% endfor %}
     </tbody>
@@ -91,6 +93,29 @@
 
         {% if needs_update %}
         {% else %}
+
+        function tableSearch() {
+
+            // https://www.w3schools.com/howto/howto_js_filter_table.asp
+
+            var input, filter, table, tr, td, i;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("label_table");
+            tr = table.getElementsByClassName("tableRow");
+
+            for (i = 0; i < tr.length; i++) {
+                $.each(tr[i].children, function(e, child){
+                    text = $(child).attr('data-search');
+                    if (text.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                   } else {
+                        tr[i].style.display = "none";
+                   }
+                })                
+            }
+         }
+
         $("#search_button").click(function(){
 
             // Stopped here - restart image, test view, 

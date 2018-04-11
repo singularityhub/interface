@@ -30,6 +30,7 @@ from flask import (
     url_for
 )
 
+from globus_sdk.exc import TransferAPIError
 from sregistry.main import get_client
 from tunel.server import app
 
@@ -41,27 +42,11 @@ import re
 import requests
 
 
-@app.route('/globus/<endpoint_id>')
-def get_endpoint(endpoint_id):
+@app.route('/globus/<endpoint_id>', methods=['GET', 'POST'])
+def get_endpoint(endpoint_id, path='', message=None, json_response=False):
     '''return a single endpoint that matches the result of a query, meaning
        a detail page that shows files within. This should be an endpoint
        detail page (not sure how should look)
-    '''
-    import pickle
-    pickle.dump(endpoint_id, open('ep.pkl','wb'))
-    return endpoint_table(endpoint_id=endpoint_id)
-
-
-def get_endpoints(term=None):
-    '''return a single endpoint that matches the result of a query, meaning
-       a detail page that shows files within. This should be an endpoint
-       detail page (not sure how should look)
-    '''
-    return endpoint_table(term=term)
-
-
-def endpoint_table(term=None, endpoint_id=None):
-    '''a shared view to take a term OR an endpoint id, and return a table view
     '''
     init_globus_client()
 
@@ -69,13 +54,49 @@ def endpoint_table(term=None, endpoint_id=None):
     if app.globus_client._tokens_need_update():
         return globus()
 
-    # Option 1: we have an endpoint id
-    if endpoint_id is not None:
-        endpoints = [app.globus_client._list_endpoint(endpoint_id)]
-    else:
-        endpoints = app.globus_client._list_endpoints(term)
+    if not hasattr(app.globus_client, 'transfer_client'):
+        app.globus_client._init_transfer_client()
 
-    return render_template('plugins/globus/index.html', endpoints=endpoints,
+    # Post indicates browsing the tree, with an additional path to parse
+    if request.method == "POST":
+        json_response = True
+        path = request.form.get('path') or None
+
+    # Get a list of files at endpoint, under specific path
+
+    try:
+        endpoint = app.globus_client._get_endpoint(endpoint_id)
+        paths = app.globus_client.transfer_client.operation_ls(endpoint_id, 
+                                                        path=path).data
+        
+    # Pull out call from sregistry to return view with error
+
+    except TransferAPIError as message:
+        return get_endpoints(term=term, message=message)
+        
+    # JSON response for POSTs
+
+    if json_response is True:
+        return jsonify({'data': paths['DATA'], 
+                        'path': paths['path'] })
+
+    images = app.sregistry.images()
+
+    return render_template('plugins/globus/endpoint.html', endpoint=endpoint,
+                                                           paths=paths['DATA'],
+                                                           path=paths['path'],
+                                                           images=images,
+                                                           activeplugin="globus")
+
+
+
+def get_endpoints(term=None, message=None, endpoints=None):
+    '''return a single endpoint that matches the result of a query, meaning
+       a detail page that shows files within. This should be an endpoint
+       detail page (not sure how should look)
+    '''
+    return render_template('plugins/globus/index.html', message=message,
+                                                        endpoints=endpoints,
                                                         activeplugin="globus")
 
 
@@ -131,6 +152,10 @@ def parse_endpoints(endpoints, scopes=None):
 
        row:
        [id][scope][display_name][contact_email][organization]     
+
+       For display logic for status, see 
+       //github.com/globus/globus-sdk-python/issues/286#issuecomment-380465278
+
     '''
     if scopes is None:
         scopes = list(endpoints.keys())
@@ -138,7 +163,12 @@ def parse_endpoints(endpoints, scopes=None):
     rows = []
     for kind,eps in endpoints.items():
         if kind in scopes:
-            for epid,epmeta in eps.items():  
+            for epid,epmeta in eps.items():
+
+               # setup incomplete: is_globus_connect globus_connect_setup_key
+               #if not epmeta['globus_connect_setup_key']:
+               #    status = "setup incomplete"
+  
                name = epmeta['display_name'] or epmeta['canonical_name']
                row = {'id': epid,
                       'kind': kind,

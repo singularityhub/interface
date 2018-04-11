@@ -48,18 +48,19 @@ def inject_csrf_token(response):
     return response
 
 
-# LOGGING #####################################################################
+# LOGGING ######################################################################
 
 name = app.config.get('ROBOTNAME')
 file_handler = logging.FileHandler("/tmp/tunel-server-%s.log" %name)
 app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.DEBUG)  
 
-# PLUGINS #####################################################################
+# PLUGINS ######################################################################
 
 @app.context_processor
 def add_plugins():
     return dict(plugins=generate_plugins())
+
 
 # Main #########################################################################
 

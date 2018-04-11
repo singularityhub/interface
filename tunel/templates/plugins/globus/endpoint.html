@@ -121,7 +121,7 @@
                       row += d.name
                     }
                     row += '</td><td data-search="permissions,' + d.permissions + '">'+ d.permissions +'</td>'
-                    row += '<td data-search="size,'+ d.size +'">'+d.size+'</td><td data-search="modified date,'+ d.modified_date +'">' +d.modified_date+ '</td>';
+                    row += '<td data-search="size,'+ d.size +'">'+d.size+'</td><td data-search="modified date,'+ d.last_modified.split(' ')[0] +'">' +d.last_modified.split(' ')[0] + '</td>';
                     row +='<td data-search="user,'+d.user+'">'+d.user+'</td></tr>'
                     $('tbody').append(row);
                 })
@@ -143,8 +143,6 @@
         });
 
         // TODO: STOPPED HERE: 1. make functions to link upload /download buttons
-        // make function to (on click of folder) retrieve updated files,
-        // remove selections, and update table
 
         function tableSearch() {
 

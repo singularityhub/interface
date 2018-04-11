@@ -60,7 +60,7 @@ def get_endpoint(endpoint_id, path='', message=None, json_response=False):
     # Post indicates browsing the tree, with an additional path to parse
     if request.method == "POST":
         json_response = True
-        path = request.form.get('path') or None
+        path = request.args.get('path') or None
 
     # Get a list of files at endpoint, under specific path
 
@@ -82,11 +82,12 @@ def get_endpoint(endpoint_id, path='', message=None, json_response=False):
 
     images = app.sregistry.images()
 
-    return render_template('plugins/globus/endpoint.html', endpoint=endpoint,
-                                                           paths=paths['DATA'],
-                                                           path=paths['path'],
-                                                           images=images,
-                                                           activeplugin="globus")
+    return render_template('plugins/globus/endpoint.html', 
+                                endpoint=endpoint,
+                                paths=paths['DATA'],
+                                path=paths['path'],
+                                images=images,
+                                activeplugin="globus")
 
 
 

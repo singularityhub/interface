@@ -50,14 +50,14 @@
         <tbody>
         {% for item in paths %}
             <tr class="tableRow {% if item.type != 'dir' %}clickable-row{% endif %}">
-                <td data-search="{{ item.type }}"><i style="color:{% if item.type == 'file' %}cornflowerblue{% else %}darkorange{% endif %}" 
+                <td data-search="{{ item.type }}"><i style="color:{% if item.type == 'file' %}cornflowerblue{% else %}lightseagreen{% endif %}" 
                     class="fa {% if item.type == 'file' %}fa-file{% else %}fa-folder{% endif %}"></i></td>
                 <td data-search="group,{{ item.group }}">{{ item.group }}</td>
                 <td data-search="name,{{ item.name }}">{% if item.type == 'dir' %}
-                   <a href="#" class="folder" data-name="{{ item.name }}">{% endif %}
+                   <a href="#" class="folder" data-name="{{ item.name }}" data-path="{{ path }}">{% endif %}
                    {{ item.name }}</td>{% if item.type == 'dir' %}</a>{% endif %}
                 <td data-search="permissions,{{ item.permissions }}">{{ item.permissions }}</td>
-                <td data-search="user,{{ item.size }}">{{ item.size }}</td>
+                <td data-search="size,{{ item.size }}">{{ item.size }}</td>
                 {% set modified = item.last_modified.split(' ') %}
                 <td data-search="modified date,{{ item.last_modified }}">{{ modified[0] }}</td>
                 <td data-search="user,{{ item.user }}">{{ item.user }}</td>
@@ -73,7 +73,9 @@
             {% for container in images %}    
             <option value="{{ container.name }}">{{ container.uri }}</option>
             {% endfor %}
-            </select>   
+            </select>
+            <a href="/">
+            <label style="cursor:pointer; text-decoration:none" class="label label-info">containers</label></a>
          </span>
         </div>
     </div>
@@ -82,18 +84,67 @@
 {% endblock %}
 
 {% block scripts %}
-    <script type="text/javascript">
+<script type="text/javascript">
 
          $('.clickable-row').click(function() {
              $(this).addClass('selected-row').siblings().removeClass('selected-row');
              $("#transfer-button").show();
          });
 
+         function update_table(folder) {
+
+            var csrf_token = "{{ csrf_token() }}";
+            var path = $(folder).attr('data-path') + $(folder).attr('data-name');
+            console.log(path);
+            fetch('/globus/{{ endpoint.id }}?path=' + path, {
+                headers: { "X-CSRFToken": csrf_token },
+                credentials: 'same-origin',
+ 	        method: 'POST' })
+            .then((response) => response.json())
+            .then(function(data) {
+                console.log(data);
+                $('tbody').html('');
+                var row;                                
+
+                $.each(data.data, function(e, d){
+                    var color = "cornflowerblue";
+                    var icon = "file"
+                    if (d.type == "dir"){
+                        color = "lightseagreen";
+                        icon = "folder"
+                    }
+                    row = '<tr class="tableRow"><td data-search="' + d.type + '"><i style="color:'+ color +'" class="fa fa-' + icon + '"></i></td>'
+                    row +='<td data-search="group,' + d.group + '">' + d.group + '</td><td data-search="name,'+ d.name +'">'
+                    if (d.type == "dir"){
+                      row += '<a href="#" class="folder" onclick="update_table(this)" data-path="'+ data.path +'" data-name="' + d.name + '">' + d.name +'</a>'
+                    } else {
+                      row += d.name
+                    }
+                    row += '</td><td data-search="permissions,' + d.permissions + '">'+ d.permissions +'</td>'
+                    row += '<td data-search="size,'+ d.size +'">'+d.size+'</td><td data-search="modified date,'+ d.modified_date +'">' +d.modified_date+ '</td>';
+                    row +='<td data-search="user,'+d.user+'">'+d.user+'</td></tr>'
+                    $('tbody').append(row);
+                })
+             }).catch(function(err) {
+                console.log(err);
+             });
+
+         }
+
         // If there is an error, the user will be shown by appending here
         {% if message %}
             $('#message-activate').append("{{ message }}");
             $('#message-activate').show();
         {% endif %}
+
+        // On click of a path, fetch updated table
+        $(".folder").click(function(){
+            update_table(this);
+        });
+
+        // TODO: STOPPED HERE: 1. make functions to link upload /download buttons
+        // make function to (on click of folder) retrieve updated files,
+        // remove selections, and update table
 
         function tableSearch() {
 

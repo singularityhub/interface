@@ -67,11 +67,14 @@
         </table>
     </div>
     <div class="col-md-4">
-        <button type="button" style="margin-bottom:10px" class="btn btn-primary"><i class="fa fa-arrow-left"></i></button>
+        <button type="button" 
+                id="transfer-button-upload"
+                style="margin-bottom:10px" 
+                class="btn btn-primary"><i class="fa fa-arrow-left"></i></button>
         <div class="input-group">
-            <select multiple class="form-control" style="height:200px" id="container" name="container">
+            <select multiple class="form-control" style="height:200px" id="container-select" name="container">
             {% for container in images %}    
-            <option value="{{ container.name }}">{{ container.uri }}</option>
+            <option value="{{ container.image }}">{{ container.uri }}</option>
             {% endfor %}
             </select>
             <a href="/">
@@ -85,6 +88,95 @@
 
 {% block scripts %}
 <script type="text/javascript">
+
+
+         // Transfer button to download remote endpoint image
+         // STOPPED HERE - make this work, then consolodate into one function
+
+         $("#transfer-button").click(function(){
+
+           var containers = [];    
+           $("#container-select :selected").each(function(){
+               containers.push($(this).val()); 
+           }); 
+           console.log(containers);
+           
+           // Only continue if the user has selected containers!
+
+           if (containers.length > 0){
+
+               var csrf_token = "{{ csrf_token() }}";
+               data = {'path': "{{ path }}",
+                       'containers': containers}
+
+               fetch('/globus/transfer/get/{{ endpoint.id }}', {
+                   headers: { "X-CSRFToken": csrf_token },
+                   credentials: 'same-origin',
+                   body: JSON.stringify(data),
+ 	           method: 'POST' 
+               })
+               .then((response) => response.json())
+               .then(function(data) {
+                  $('#message-activate').html(data.data);
+                  $('#message-activate').show();
+               })
+               .catch(function(err) {
+                  $('#message-activate').html(err);
+                  $('#message-activate').show();
+               });
+
+           } else {
+              message = "Please select local containers to upload."
+              $('#message-activate').html(message);
+              $('#message-activate').show();
+           }
+
+         })
+
+
+
+         // Transfer Button to upload local image
+
+         $("#transfer-button-upload").click(function(){
+
+           var containers = [];    
+           $("#container-select :selected").each(function(){
+               containers.push($(this).val()); 
+           }); 
+           console.log(containers);
+           
+           // Only continue if the user has selected containers!
+
+           if (containers.length > 0){
+
+               var csrf_token = "{{ csrf_token() }}";
+               data = {'path': "{{ path }}",
+                       'containers': containers}
+
+               fetch('/globus/transfer/put/{{ endpoint.id }}', {
+                   headers: { "X-CSRFToken": csrf_token },
+                   credentials: 'same-origin',
+                   body: JSON.stringify(data),
+ 	           method: 'POST' 
+               })
+               .then((response) => response.json())
+               .then(function(data) {
+                  $('#message-activate').html(data.data);
+                  $('#message-activate').show();
+               })
+               .catch(function(err) {
+                  $('#message-activate').html(err);
+                  $('#message-activate').show();
+               });
+
+           } else {
+              message = "Please select local containers to upload."
+              $('#message-activate').html(message);
+              $('#message-activate').show();
+           }
+
+         })
+
 
          $('.clickable-row').click(function() {
              $(this).addClass('selected-row').siblings().removeClass('selected-row');

@@ -31,6 +31,12 @@ from flask import (
 )
 
 from globus_sdk.exc import TransferAPIError
+from .utils import (
+    do_transfer,
+    generate_transfer_file,
+    generate_transfer_name
+)
+
 from sregistry.main import get_client
 from tunel.server import app
 
@@ -40,6 +46,104 @@ import logging
 import os
 import re
 import requests
+
+## Transfer views
+
+@app.route('/globus/transfer/get/<endpoint_id>', methods=['POST'])
+def globus_transfer_from(endpoint_id, message="Invalid request."):
+    '''transfer one or more containers from the tunel registry endpoint to a 
+       selected globus endpoint.
+
+       Parameters
+       ==========
+       endpoint_id: the id of the endpoint to transfer from.
+       message: the default message sent to the user if the transfer 
+                request had an issues.
+
+    '''
+
+    init_globus_client()
+
+    # Do we need to update tokens?
+    if app.globus_client._tokens_need_update():
+        return globus()
+
+    if not hasattr(app.globus_client, 'transfer_client'):
+        app.globus_client._init_transfer_client()
+
+    # The tunel interface local endpoint
+    dest = app.config['PLUGIN_GLOBUS_ENDPOINT']
+
+    # Post indicates browsing the tree, with an additional path to parse
+    if request.method == "POST":
+        data = json.loads(request.data.decode('utf-8'))
+        remote = data.get('remote', '')
+        
+        tmp = generate_transfer_name()
+
+        result = do_transfer(client=app.globus_client,
+                             source_endpoint=endpoint_id,
+                             dest_endpoint=dest,
+                             images=[(remote, tmp)]) # [(source, dest)...]
+
+        link = "https://globus.org/app/activity/%s" %result['task_id']
+        mess = result['message']
+        message = "%s: <a target='_blank' href='%s'>view task</a>" %(mess, link)
+
+    return jsonify({"data": message })
+
+
+
+@app.route('/globus/transfer/put/<endpoint_id>', methods=['POST'])
+def globus_transfer_to(endpoint_id, message="Invalid request."):
+    '''transfer one or more containers from the tunel registry endpoint to a 
+       selected globus endpoint.
+
+       Parameters
+       ==========
+       endpoint_id: the id of the endpoint to transfer to.
+       message: the default message sent to the user if the transfer did
+                not have any containers, or wasn't a post (we should
+                not get to the second of those states).
+
+    '''
+
+    init_globus_client()
+
+    # Do we need to update tokens?
+    if app.globus_client._tokens_need_update():
+        return globus()
+
+    if not hasattr(app.globus_client, 'transfer_client'):
+        app.globus_client._init_transfer_client()
+
+    # The tunel interface local endpoint
+    source_endpoint = app.config['PLUGIN_GLOBUS_ENDPOINT']
+
+    # Post indicates browsing the tree, with an additional path to parse
+    if request.method == "POST":
+        data = json.loads(request.data.decode('utf-8'))
+        path = data.get('path', '').replace('/~/','')
+        containers = data.get('containers', [])
+        
+        for container in containers:
+
+            # Create temporary file
+            tmp = generate_transfer_file(container)
+            image = os.path.join(path, os.path.basename(container))
+            images.append([tmp, image])
+
+        # Submit image set as one job
+        result = do_transfer(client=app.globus_client,
+                             source_endpoint=source_endpoint,
+                             dest_endpoint=endpoint_id,
+                             images=images)
+
+        link = "https://globus.org/app/activity/%s" %result['task_id']
+        mess = result['message']
+        message = "%s: <a target='_blank' href='%s'>view task</a>" %(mess, link)
+
+    return jsonify({"data": message })
 
 
 @app.route('/globus/<endpoint_id>', methods=['GET', 'POST'])

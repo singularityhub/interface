@@ -21,9 +21,9 @@
 <div class="row">
     <div class="col-md-8">
         <input type="text" id="searchInput" onkeyup="tableSearch()" style="margin-bottom:10px" placeholder="Search names...">
-        <p class="alert alert-info" id="message-activate" style="display:none;padding: 8px; margin-left: 10px"></p>
         <button type="button" style="float:right; margin-bottom:8px; display:none" 
                 id="transfer-button" class="btn btn-primary"><i class="fa fa-arrow-right"></i></button>
+        <p class="alert alert-info" id="message-activate" style="display:none;padding: 8px; margin-left: 10px"></p>
         <table id="label_table" class="table table-hover table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
@@ -49,7 +49,7 @@
         </tfoot>
         <tbody>
         {% for item in paths %}
-            <tr class="tableRow {% if item.type != 'dir' %}clickable-row{% endif %}">
+            <tr class="tableRow {% if item.type != 'dir' %}clickable-row{% endif %}" data-path="{{ path }}{{ item.name }}">
                 <td data-search="{{ item.type }}"><i style="color:{% if item.type == 'file' %}cornflowerblue{% else %}lightseagreen{% endif %}" 
                     class="fa {% if item.type == 'file' %}fa-file{% else %}fa-folder{% endif %}"></i></td>
                 <td data-search="group,{{ item.group }}">{{ item.group }}</td>
@@ -95,19 +95,16 @@
 
          $("#transfer-button").click(function(){
 
-           var containers = [];    
-           $("#container-select :selected").each(function(){
-               containers.push($(this).val()); 
-           }); 
-           console.log(containers);
+           var container = $(".selected-row");    
+           console.log(container);
            
            // Only continue if the user has selected containers!
 
-           if (containers.length > 0){
+           if (container != null){
 
+               var path = $(container).attr('data-path');
                var csrf_token = "{{ csrf_token() }}";
-               data = {'path': "{{ path }}",
-                       'containers': containers}
+               data = {'path': path };
 
                fetch('/globus/transfer/get/{{ endpoint.id }}', {
                    headers: { "X-CSRFToken": csrf_token },
@@ -126,7 +123,7 @@
                });
 
            } else {
-              message = "Please select local containers to upload."
+              message = "Please select a remote container to get by clicking on the row."
               $('#message-activate').html(message);
               $('#message-activate').show();
            }
@@ -177,6 +174,7 @@
 
          })
 
+         // The user can select remote containers based on the selected-row attribute
 
          $('.clickable-row').click(function() {
              $(this).addClass('selected-row').siblings().removeClass('selected-row');
@@ -234,7 +232,6 @@
             update_table(this);
         });
 
-        // TODO: STOPPED HERE: 1. make functions to link upload /download buttons
 
         function tableSearch() {
 

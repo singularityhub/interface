@@ -23,7 +23,7 @@ import grp
 import os
 import pwd
 import tempfile
-
+import globus_sdk
 
 def do_transfer(client,
                 source_endpoint, 

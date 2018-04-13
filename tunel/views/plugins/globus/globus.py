@@ -77,8 +77,8 @@ def globus_transfer_from(endpoint_id, message="Invalid request."):
     # Post indicates browsing the tree, with an additional path to parse
     if request.method == "POST":
         data = json.loads(request.data.decode('utf-8'))
-        remote = data.get('remote', '')
-        
+        remote = data.get('path')
+        print(remote);
         tmp = generate_transfer_name()
 
         result = do_transfer(client=app.globus_client,

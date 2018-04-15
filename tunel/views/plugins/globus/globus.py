@@ -241,7 +241,7 @@ def globus(term=None, needs_update=True, endpoints=None):
         # Update database with finished tasks
         endpoint_id = app.config['PLUGIN_GLOBUS_ENDPOINT']
         events = check_tasks(app.globus_client, endpoint_id)
-        app.logger.info('Processed %s successful imports: %s' %events)  
+        app.logger.info('Processed successful imports: %s' %events)  
 
         # If no endpoints, tell user no results
         if len(endpoints) == 0 and term:

@@ -100,28 +100,41 @@ def check_tasks(client, endpoint_id):
     from sregistry.utils import parse_image_name
     events = []
 
+
     for task in client.transfer_client.task_list():    
-        
-        # We only care about those incoming to endpoint
-        if task.data['destination_endpoint_id'] == endpoint_id:
-            task_id = task.data['task_id']
-            for event in client.transfer_client.task_successful_transfers(task_id):
 
-                # Do we have the container?
-                if os.path.exists(event['destination_path']):
+        tid = task.data['task_id']
 
-                    # Link to task history 
-                    link = "https://globus.org/app/activity/%s" %task_id
+        # Tasks still processing won't have events available
+        if task.data['status'] == "SUCCEEDED":
 
-                    # Parse name from source_path
-                    metadata = {'globus_event': event, 
-                                'globus_task_id': task_id,
-                                'selfLink': link }
-                    
-                    names = parse_image_name(os.path.basename(event['source_path']))
-                    metadata.update(names)
-                    result = client.add(image_uri=names['uri'], 
-                                        image_path=event['destination_path'],
-                                        metadata=metadata)
-                    events.append(names['uri'])
+            for event in client.transfer_client.task_successful_transfers(tid):
+
+                # Link to task history 
+                link = "https://globus.org/app/activity/%s" %task_id
+                dest = event['destination_path']
+                source = event['source_path']
+
+                # Case 1: Add images transferred here to sregistry
+                if task.data['destination_endpoint_id'] == endpoint_id:
+
+                    # Do we have the container?
+                    if os.path.exists(dest):
+
+                        # Parse name from source_path
+                        metadata = {'globus_event': event, 
+                                    'globus_task_id': task_id,
+                                    'selfLink': link }
+                     
+                        names = parse_image_name(os.path.basename(source))
+                        metadata.update(names)
+                        result = client.add(image_uri=names['uri'], 
+                                            image_path=dest,
+                                            metadata=metadata)
+                        events.append(names['uri'])
+
+                # Case 2: remove temporary files for finished remote transfers
+                else:
+                    if os.path.exists(event['source_path']):
+                        os.remove(event['source_path'])
     return events

@@ -35,7 +35,7 @@ import logging
 import os
 
 
-@app.route('/action/pull', methods=["POST"])
+@app.route('/action/pull')
 def action_pull():
     '''the fetch view to perform the pull, and return a response
     '''
@@ -64,7 +64,7 @@ def action_pull():
     return Response(image_file, mimetype='text/plain')
 
 
-@app.route('/pull', methods=["GET"])
+@app.route('/pull')
 def pull():
     '''the main pull view to show a terminal, and allow a client to pull
     '''

@@ -17,19 +17,21 @@
     <hr>
 </div>
 {% endif %}
- {% if images %}
- <div class="input-group">
-     <select class="form-control" style="height:38px" id="container" name="container">
-     {% for container in images %}    
-<option value="{{ container.name }}">{{ container.uri }}</option>
-     {% endfor %}
-     </select>   
-     <span class="input-group-btn">
-<button class="btn btn-default" type="button" tabindex="-1">View</button>
-     </span>
- </div>
- {% endif %}
-
+{% if images %}
+<form id="docker-form" action="/container/view" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+     <div class="input-group">
+         <select class="form-control" style="height:38px" id="container" name="container">
+         {% for container in images %}    
+         <option value="{{ container.uri }}">{{ container.uri }}</option>
+         {% endfor %}
+         </select>   
+         <span class="input-group-btn">
+         <button type="submit" class="btn btn-default" type="button" tabindex="-1">View</button>
+         </span>
+     </div>
+</form>
+{% endif %}
  <img name="robot" 
       onMouseOver="document.robot.src='{{ url_for('static', filename='img/robot-blinking.png') }}';" 
       onMouseOut="document.robot.src='{{ url_for('static', filename='img/robot.png') }}';"

@@ -1,0 +1,39 @@
+{% extends "main/main.html" %}
+
+
+{% block sidebar %}
+<div style="margin-top:55px" class="row">
+</div>
+{% endblock %}
+
+{% block main %}
+{% if container %}
+<div class="row">
+    <a href="/container/view?uri={{ container.uri }}"><h3>{{ container.uri }}</h3></a>
+        <div class="row" style='margin-top:20px'>
+        <div class='col-md-12'>
+           <pre style="max-width:900px" id="metrics"></pre>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class='col-md-12'>
+       <p class="alert alert-info">{% if message %}{{ message }}{% else %}
+          Please select a container to view!{% endif %}</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+
+         {% if container %}
+         var metrics = {{ container.metrics | safe }}
+         metrics = JSON.stringify(metrics,null,4).replace('\r','<br>');
+         $("#metrics").html(metrics);
+         {% endif %}
+
+    </script>
+{% endblock %}

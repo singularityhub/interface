@@ -46,15 +46,14 @@ def action_pull():
     uri = request.args.get('uri')
     container = '%s%s' %(uri, container.replace(uri,''))
 
-    print(container)
+    app.logging.info("PULL for %s" %container)
 
     # Make sure we use the right client
     os.environ['SREGISTRY_CLIENT'] = uri.replace('://','')
     os.environ.putenv('SREGISTRY_CLIENT', uri.replace('://',''))
     from sregistry.main import get_client
     client = get_client(image=container)
-    print(client.client_name)
-
+    
     try:
         image_file = client.pull(container, force=True)
     except:

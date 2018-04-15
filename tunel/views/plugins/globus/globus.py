@@ -32,6 +32,7 @@ from flask import (
 
 from globus_sdk.exc import TransferAPIError
 from .utils import (
+    check_tasks,
     do_transfer,
     generate_transfer_file,
     generate_transfer_name
@@ -61,7 +62,6 @@ def globus_transfer_from(endpoint_id, message="Invalid request."):
                 request had an issues.
 
     '''
-
     init_globus_client()
 
     # Do we need to update tokens?
@@ -78,7 +78,6 @@ def globus_transfer_from(endpoint_id, message="Invalid request."):
     if request.method == "POST":
         data = json.loads(request.data.decode('utf-8'))
         remote = data.get('path')
-        print(remote);
         tmp = generate_transfer_name()
 
         result = do_transfer(client=app.globus_client,
@@ -184,6 +183,10 @@ def get_endpoint(endpoint_id, path='', message=None, json_response=False):
         return jsonify({'data': paths['DATA'], 
                         'path': paths['path'] })
 
+    # Update database with finished tasks
+    endpoint_id = app.config['PLUGIN_GLOBUS_ENDPOINT']
+    events = check_tasks(app.globus_client, endpoint_id)
+    app.logger.info('Processed %s successful events.' %events)  
     images = app.sregistry.images()
 
     return render_template('plugins/globus/endpoint.html', 
@@ -233,6 +236,11 @@ def globus(term=None, needs_update=True, endpoints=None):
         # Dictionary of endpoints, keys are scope
         endpoints = app.globus_client._get_endpoints(term)
         endpoints = parse_endpoints(endpoints, scopes=scopes)
+
+        # Update database with finished tasks
+        endpoint_id = app.config['PLUGIN_GLOBUS_ENDPOINT']
+        events = check_tasks(app.globus_client, endpoint_id)
+        app.logger.info('Processed %s successful events.' %events)  
 
         # If no endpoints, tell user no results
         if len(endpoints) == 0 and term:

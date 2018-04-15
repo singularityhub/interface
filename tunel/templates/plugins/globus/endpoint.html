@@ -203,7 +203,7 @@
                         color = "lightseagreen";
                         icon = "folder"
                     }
-                    row = '<tr class="tableRow"><td data-search="' + d.type + '"><i style="color:'+ color +'" class="fa fa-' + icon + '"></i></td>'
+                    row = '<tr class="tableRow" data-path="'+ data.path + d.name+ '"><td data-search="' + d.type + '"><i style="color:'+ color +'" class="fa fa-' + icon + '"></i></td>'
                     row +='<td data-search="group,' + d.group + '">' + d.group + '</td><td data-search="name,'+ d.name +'">'
                     if (d.type == "dir"){
                       row += '<a href="#" class="folder" onclick="update_table(this)" data-path="'+ data.path +'" data-name="' + d.name + '">' + d.name +'</a>'

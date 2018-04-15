@@ -25,6 +25,7 @@ import pwd
 import tempfile
 import globus_sdk
 
+
 def do_transfer(client,
                 source_endpoint, 
                 dest_endpoint, 
@@ -90,3 +91,37 @@ def generate_transfer_file(container):
     st = os.stat(tmp)
     os.chmod(tmp, st.st_mode | stat.S_IEXEC)
     return tmp
+
+
+def check_tasks(client, endpoint_id):
+    ''' check on task list and compare against local, update with any containers
+        that have finished status
+    '''
+    from sregistry.utils import parse_image_name
+    events = 0
+
+    for task in client.transfer_client.task_list():    
+        
+        # We only care about those incoming to endpoint
+        if task.data['destination_endpoint_id'] == endpoint_id:
+            task_id = task.data['task_id']
+            for event in client.transfer_client.task_successful_transfers(task_id):
+
+                # Do we have the container?
+                if os.path.exists(event['destination_path']):
+
+                    # Link to task history 
+                    link = "https://globus.org/app/activity/%s" %task_id
+
+                    # Parse name from source_path
+                    metadata = {'globus_event': event, 
+                                'globus_task_id': task_id,
+                                'selfLink': link }
+                    
+                    names = parse_image_name(os.path.basename(event['source_path']))
+                    metadata.update(names)
+                    result = client.add(image_uri=names['uri'], 
+                                        image_path=event['destination_path'],
+                                        metadata=metadata)
+                    events+=1
+    return events

@@ -227,6 +227,12 @@
             $('#message-activate').show();
         {% endif %}
 
+        // If containers finished transferring
+        {% if events %}
+            $('#message-activate').append("New containers added {% for event in events %}|{{ event }}{% endfor %}");
+            $('#message-activate').show();
+        {% endif %}
+
         // On click of a path, fetch updated table
         $(".folder").click(function(){
             update_table(this);

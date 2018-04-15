@@ -98,7 +98,7 @@ def check_tasks(client, endpoint_id):
         that have finished status
     '''
     from sregistry.utils import parse_image_name
-    events = 0
+    events = []
 
     for task in client.transfer_client.task_list():    
         
@@ -123,5 +123,5 @@ def check_tasks(client, endpoint_id):
                     result = client.add(image_uri=names['uri'], 
                                         image_path=event['destination_path'],
                                         metadata=metadata)
-                    events+=1
+                    events.append(names['uri'])
     return events

@@ -95,7 +95,9 @@
             <h3>Issue the following commands to update your tokens:</h3>
             <p class="well">
                 <strong># the container name is "tunel," type docker ps to see the name</strong><br>
-                docker exec -it tunel python /code/script/update_tokens.py
+                docker exec -it tunel python /code/script/update_tokens.py<br>
+                # If you continue to receive this message, please restart the container:<br>
+                docker restart tunel
             </p>
             <p>When you have updated your tokens, reload the page.</p>
             <a href="/globus">
@@ -114,6 +116,12 @@
         // If there is an error, the user will be shown by appending here
         {% if message %}
             $('#message-activate').append("{{ message }}");
+            $('#message-activate').show();
+        {% endif %}
+
+        // If containers finished transferring
+        {% if events %}
+            $('#message-activate').append("New containers added {% for event in events %}|{{ event }}{% endfor %}");
             $('#message-activate').show();
         {% endif %}
 

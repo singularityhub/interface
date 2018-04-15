@@ -186,13 +186,14 @@ def get_endpoint(endpoint_id, path='', message=None, json_response=False):
     # Update database with finished tasks
     endpoint_id = app.config['PLUGIN_GLOBUS_ENDPOINT']
     events = check_tasks(app.globus_client, endpoint_id)
-    app.logger.info('Processed %s successful events.' %events)  
+    app.logger.info('Processed successful imports: %s' %events)
     images = app.sregistry.images()
 
     return render_template('plugins/globus/endpoint.html', 
                                 endpoint=endpoint,
                                 paths=paths['DATA'],
                                 path=paths['path'],
+                                events=events,
                                 images=images,
                                 activeplugin="globus")
 
@@ -240,7 +241,7 @@ def globus(term=None, needs_update=True, endpoints=None):
         # Update database with finished tasks
         endpoint_id = app.config['PLUGIN_GLOBUS_ENDPOINT']
         events = check_tasks(app.globus_client, endpoint_id)
-        app.logger.info('Processed %s successful events.' %events)  
+        app.logger.info('Processed %s successful imports: %s' %events)  
 
         # If no endpoints, tell user no results
         if len(endpoints) == 0 and term:
@@ -248,6 +249,7 @@ def globus(term=None, needs_update=True, endpoints=None):
 
     return render_template('plugins/globus/index.html', term=term, 
                                                         endpoints=endpoints,
+                                                        events=events,
                                                         needs_update=needs_update,
                                                         activeplugin="globus")
 

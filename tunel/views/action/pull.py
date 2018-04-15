@@ -28,18 +28,14 @@ from flask import (
     jsonify
 )
 
-from flask_wtf.csrf import generate_csrf
-from flask_cors import cross_origin
-from werkzeug import secure_filename
-
 from tunel.server import app
 
+import json
 import logging
 import os
-import json
 
 
-@app.route('/action/pull')
+@app.route('/action/pull', methods=["POST"])
 def action_pull():
     '''the fetch view to perform the pull, and return a response
     '''
@@ -68,7 +64,7 @@ def action_pull():
     return Response(image_file, mimetype='text/plain')
 
 
-@app.route('/pull')
+@app.route('/pull', methods=["GET"])
 def pull():
     '''the main pull view to show a terminal, and allow a client to pull
     '''

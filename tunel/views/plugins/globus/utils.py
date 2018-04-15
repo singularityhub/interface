@@ -111,7 +111,7 @@ def check_tasks(client, endpoint_id):
             for event in client.transfer_client.task_successful_transfers(tid):
 
                 # Link to task history 
-                link = "https://globus.org/app/activity/%s" %task_id
+                link = "https://globus.org/app/activity/%s" %tid
                 dest = event['destination_path']
                 source = event['source_path']
 
@@ -123,7 +123,7 @@ def check_tasks(client, endpoint_id):
 
                         # Parse name from source_path
                         metadata = {'globus_event': event, 
-                                    'globus_task_id': task_id,
+                                    'globus_task_id': tid,
                                     'selfLink': link }
                      
                         names = parse_image_name(os.path.basename(source))

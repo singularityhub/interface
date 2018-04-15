@@ -3,7 +3,8 @@ tunel.egg-info
 tunel/config.py
 tunel-server.log
 _site
-.data
+data/
 dist
 OLD
+pypi.sh
 __pycache__

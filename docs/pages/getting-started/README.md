@@ -26,6 +26,22 @@ $ docker inspect tunel
 $ docker restart tunel
 ```
 
+If you want to authenticate with globus and enable your container as an
+endpoint, start with the --globus flag to create the endpoint.
+
+```
+$ docker run --name tunel -d -p 80:80 --privileged -v data:/root vanessa/tunel start --globus
+```
+
+And then authenticate your container to access your endpoints.
+
+```
+$ docker exec -it tunel python /code/script/update_tokens.py globus
+```
+
+See more about globus in the [Globus plugin](/interface/plugin-globus) documentation page.
+
+
 ## Usage
 You can use the container directly from Docker Hub. 
 
@@ -63,6 +79,54 @@ You can also skip the volume and just use it on a temporary basis:
 ```
 docker run -p 80:80 --privileged vanessa/tunel start
 ```
+
+This means that any containers that you generate or pull with Tunel will be available
+in the folder data/.singularity/shub, which is the storage base. For example:
+
+```bash
+$ ls data/.singularity/shub
+library                      nvidia
+library-busybox:latest.simg  nvidia-tensorflow:17.10.simg
+library-centos:6.simg        nvidia-tensorflow:17.11.simg
+library-centos:7.simg        vsoch
+library-ubuntu:14.04.simg    vsoch-hello-world:latest@ed9755a0871f04db3e14971bec56a33f.simg
+library-ubuntu:latest.simg
+```
+
+TLDR: 
+
+> The folder mapped to `data` is the primary connection between the Tunel interface
+and your host!
+
+## Pulling Containers
+You probably want to do something like the following:
+
+```bash
+pull --> inspect --> use or transfer
+```
+
+If you click on "pull containers" in the sidebar, you will be taken to the container
+pulling view.  You can enter a uri, and a source (Docker Hub, for example) push "pull"
+to pull the container to your local sregistry (Singularity Registry).
+
+![img/pulled.png](img/pulled.png)
+
+When your container is pulled, you can click on the link to see its metadata.
+The metadata will give you a quick look into its labels and environment.
+
+![img/container_details.png](img/container_details.png)
+
+You might next want to transfer your images to your local cluster. To do this,
+we recommend using Tunel with the [globus plugin](/interface/plugin-globus).
+
+You might also want to interact with the containers from inside the tunel Docker
+container, or from the host! We recommend interaction from within the
+Tunel container, discussed next.
+
+If you get an error, you can click "logs" in the lower right to see server logs.
+This can help if you need to [submit an issue](https://www.github.com/singularityhub/interface/issues).
+
+![img/logs.png](img/logs.png)
 
 ## Singularity Registry
 To interact with your database easily, you can shell inside the container. In

@@ -69,5 +69,5 @@ def generator():
         parser._parse()
         recipes[convertType] = parser.convert()
 
-    return render_template('recipe.html', recipes=recipes,
-                                          recipetype=convertType)
+    return render_template('recipe/index.html', recipes=recipes,
+                                                recipetype=convertType)

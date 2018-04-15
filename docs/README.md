@@ -27,23 +27,28 @@ flows to authenticate via your platform of choice, or even  sharing your contain
 "Tunel" is a tunnel between those two things. It takes the technology of some of the
 core [container tools](https://singularityhub.github.io/) and brings them together to
 have some open source, collaborative fun, and importantly, to help the academic scientist
-use container technology. This tool is **under construction** however the basic commands
-to pull images and create recipes are working and ready to go! The following things are on the queue:
-
- - Exposing the remainder of Singularity Registry Global Client endpoints (Google Drive, Storage, Dropbox, etc.) so you can move containers easily from one to another
- - An individual container view to inspect and issue other actions for a container.
- - Integration of the [Builders](https://singularityhub.github.io/builders/) so you can create a recipe, click a button, and have it build on Google Cloud.
- - An ability to easily share containers via the various platforms you connect to.
- - Some kind of integration with Github. I love Github, I can't help it.
-
-This is exciting because by way of a web interface, we can very easily bring many more modern tools
-to our interaction with containers. There will likely be many changes in the structure and documentation - this first skeleton was a weekend of work and so expect exciting things to come! Please [provide feedback](https://www.github.com/singularityhub/interface/issues) or contribute!
-
+use container technology. 
 
 ## Getting Started
  - [Interface](/interface/ui): A quick introduction to Tunel's interface. That is what the repository is called, after all.
  - [Quick Start](/interface/quick-start): A quick start guide to getting your Tunel up and running!
  - [Development](/interface/development): Helpful commands for development and debugging.
+
+## Plugins
+
+ - [Globus](/interface/plugin-globus): Connect your tunel to Globus to transfer images to and from your Globus endpoints.
+
+
+## Feedback
+We are looking for feedback about what features you would like implemented next!
+
+ - Exposing the remainder of Singularity Registry Global Client endpoints (Google Drive, Storage, Dropbox, etc.) so you can move containers easily from one to another
+ - Integration of the [Builders](https://singularityhub.github.io/builders/) so you can create a recipe, click a button, and have it build on Google Cloud.
+ - An ability to easily share containers via the various platforms you connect to.
+ - An integration with Github?
+
+This is exciting because by way of a web interface, we can very easily bring many more modern tools
+to our interaction with containers. Please [provide feedback](https://www.github.com/singularityhub/interface/issues) or contribute!
 
 
 ## Getting Help

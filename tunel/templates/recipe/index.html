@@ -20,7 +20,7 @@
           <ul class="side-nav">
             <li class="is-active"><span>Singularity</span></li>
             <li id='docker-section'><span>Docker</span></li>
-            <li><span>Home</span></li>
+            <li id="home"><span><a href="/">Home</a></span></li></a>
           </ul>
         </nav>
 
@@ -43,11 +43,6 @@
                           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                       </div>
                   </form>
-
-                <img src="{{ url_for('static', filename='img/robot.png') }}" 
-                     width="200px" 
-                     style="float:right"
-                     alt="Recipe Time!">
           </div>
           </li>
           <li class="l-section section" data-type='docker'>
@@ -76,7 +71,6 @@
               <h2>Back to It!</h2>
                  <div class="row">
                      <div class="col-md-12">
-                     {% include "sidebar.html" %}
                      </div>
                  </div>
                </div>
@@ -92,6 +86,9 @@
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/generator-functions.js') }}"></script>
     <script type="text/javascript">
+    $('#home').click(function(){
+        document.location = '/'
+    })
     $(document).ready(function() {
       console.log('<3');
       if ('{{ recipetype }}' == 'docker' ){

@@ -30,29 +30,26 @@ from flask import (
 
 from tunel.server import app
 
-import logging
 import os
 import json
+import logging
 
 
-
-# Settings #####################################################################
-
-@app.route('/settings', methods=['GET'])
-def settings():
-    return render_template('settings.html')
-
-
-@app.route('/set/settings', methods=['GET'])
-def set_settings():
-    '''set a token for nvidia cloud. This should be a POST with csrf, okay
-       with localhost for now
+@app.route('/container/<uri>', methods=['POST', 'GET'])
+def view_container(uri=None, message=None, container=None):
+    '''return a plain text log to parse into any view for the user
     '''
-    token = request.args.get('nvidia')
-    if token is not None:
-        print(token)
-        flash('Your Nvidia Token has been updated')
-        app.sregistry.client_name = 'nvidia'
-        app.sregistry._get_and_update_setting('SREGISTRY_NVIDIA_TOKEN', token)
+    if request.method == "POST":
+        uri = request.form.get('container')
 
-    return Response(token, status=200, mimetype='application/json')
+    elif request.method == "GET":
+        uri = request.args.get('uri')
+
+    if uri is not None:
+        container = app.sregistry.get(uri)
+        message = "Please select a container to view!"
+
+    images = app.sregistry.images()
+    return render_template('main/container.html', container=container,
+                                                  message=message,
+                                                  images=images)

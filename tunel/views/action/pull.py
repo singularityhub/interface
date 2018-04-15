@@ -28,15 +28,11 @@ from flask import (
     jsonify
 )
 
-from flask_wtf.csrf import generate_csrf
-from flask_cors import cross_origin
-from werkzeug import secure_filename
-
 from tunel.server import app
 
+import json
 import logging
 import os
-import json
 
 
 @app.route('/action/pull')
@@ -44,23 +40,20 @@ def action_pull():
     '''the fetch view to perform the pull, and return a response
     '''
 
-    from shelljob import proc
-
     # Ensure uri appears once
 
     container = request.args.get('q')
     uri = request.args.get('uri')
     container = '%s%s' %(uri, container.replace(uri,''))
 
-    print(container)
+    app.logger.info("PULL for %s" %container)
 
     # Make sure we use the right client
     os.environ['SREGISTRY_CLIENT'] = uri.replace('://','')
     os.environ.putenv('SREGISTRY_CLIENT', uri.replace('://',''))
     from sregistry.main import get_client
     client = get_client(image=container)
-    print(client.client_name)
-
+    
     try:
         image_file = client.pull(container, force=True)
     except:
@@ -76,5 +69,4 @@ def pull():
     '''
     app.sregistry.client_name = 'nvidia'
     nvidia = app.sregistry._get_setting('SREGISTRY_NVIDIA_TOKEN')
-    return render_template('pull.html', nvidia=nvidia)
-
+    return render_template('action/pull.html', nvidia=nvidia)

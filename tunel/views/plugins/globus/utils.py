@@ -106,7 +106,7 @@ def check_tasks(client, endpoint_id):
         tid = task.data['task_id']
 
         # Tasks still processing won't have events available
-        if task.data['status'] == "SUCCEEDED":
+        if task.data['status'] in ["SUCCEEDED", "FAILED"]:
 
             for event in client.transfer_client.task_successful_transfers(tid):
 

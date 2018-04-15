@@ -46,7 +46,7 @@ def action_pull():
     uri = request.args.get('uri')
     container = '%s%s' %(uri, container.replace(uri,''))
 
-    app.logging.info("PULL for %s" %container)
+    app.logger.info("PULL for %s" %container)
 
     # Make sure we use the right client
     os.environ['SREGISTRY_CLIENT'] = uri.replace('://','')

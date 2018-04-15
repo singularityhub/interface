@@ -7,9 +7,8 @@ toc: false
 ---
 
 # The Tunel Interface
-Tunel is all about its interface. We aren't professional web designers, but we
-value simplicity of design. The first point of interaction is a table that
-shows your containers.
+Tunel is all about its interface, which places an emphasis on simplicity of design. 
+The first point of interaction is a table that shows your containers.
 
 ![img/home.png](img/home.png)
 
@@ -20,12 +19,27 @@ supports, and for now is your bread and butter endpoints.
 
 ![img/pulled.png](img/pulled.png)
 
+When your container is pulled, you can click on the link to see its metadata:
+
+![img/container_details.png](img/container_details.png)
+
+Do you want to interact with containers on remote Globus endpoints, either pulling
+from or retrieving from? The [globus plugin](/interface/plugin-globus) makes it 
+easy to do that.
+
+![img/globus-endpoints.png](img/globus-endpoints.png)
+
+If you have an issue or need to see the server logs, click "logs" in the lower
+right corner.
+
+![img/logs.png](img/logs.png)
+
 The settings panel will help to manage tokens which, if you map the database to 
 your computer, will only persist there.
 
 ![img/settings.png](img/settings.png)
 
-Also in development is an interface to make it much easier to generate recipes.
+There is also an interface to make it much easier to generate recipes.
 
 ![img/recipes.png](img/recipes.png)
 

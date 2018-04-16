@@ -41,10 +41,10 @@ RUN cp /code/script/nginx.conf /etc/nginx/nginx.conf && \
 
 WORKDIR /code
 RUN /opt/conda/bin/pip install --upgrade pip && \
-    /opt/conda/bin/pip install sregistry==0.0.81 && \
-    /opt/conda/bin/pip install spython==0.0.25 && \
     /opt/conda/bin/pip install globus-cli && \
     /opt/conda/bin/pip install -r /code/requirements.txt && \
+    /opt/conda/bin/pip install sregistry==0.0.81 && \
+    /opt/conda/bin/pip install spython==0.0.25 && \
     /opt/conda/bin/python setup.py install
 
 # Clean up

@@ -25,12 +25,12 @@ that gap, for example delivering restful APIs for a command line client, OAuth2
 flows to authenticate via your platform of choice, or even  sharing your containers with others, period.
 
 "Tunel" is a tunnel between those two things. It takes the technology of some of the
-core [container tools](https://singularityhub.github.io/) and brings them together to
+core <a href="https://singularityhub.github.io/" target="_blank">container tools</a> and brings them together to
 have some open source, collaborative fun, and importantly, to help the academic scientist
 use container technology. 
 
 ## Getting Started
- - [Interface](/interface/ui): A quick introduction to Tunel's interface. That is what the repository is called, after all.
+ - [Interface](/interface/ui): A quick introduction to Tunel's interface.
  - [Quick Start](/interface/quick-start): A quick start guide to getting your Tunel up and running!
  - [Development](/interface/development): Helpful commands for development and debugging.
 

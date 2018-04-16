@@ -28,12 +28,12 @@
 <div id="loader"><img width="300px" src="{{ url_for('static', filename='img/robot-blinking.gif') }}"/></div>
 <script>
 function show_loader() {
-   $('.modal-dialog').show();
+   $('.modal-dialog').hide();
    $('#fade').show();
    $('#loader').show();
 }
 function hide_loader() {
-   $('.modal-dialog').hide();
+   $('.modal-dialog').show();
    $('#fade').hide();
    $('#loader').hide();
 }

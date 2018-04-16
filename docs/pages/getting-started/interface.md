@@ -7,7 +7,7 @@ toc: false
 ---
 
 # The Tunel Interface
-Tunel is all about its interface, which places an emphasis on simplicity of design. 
+Tunel places an emphasis on simplicity of design. 
 The first point of interaction is a table that shows your containers.
 
 ![img/home.png](img/home.png)

@@ -3,14 +3,20 @@
 {% block sidebar %}
 <div class="row" style='margin-top:20px'>
     <div class='col-md-12'>
-        <h3>Pull from</h3>
-        <div class="input-group">
+        <h3></h3>
+    </div>
+</div>
+{% endblock %}
+
+{% block main %}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="input-group" style='float:left'>
             <input class="form-control" 
                    id="image-uri" 
                    aria-describedby="image-uri-help" 
                    placeholder="Enter image uri">
-            <small id="image-uri-help"
-                   class="form-text text-muted">unique resource identifier</small>
             <span class="input-group-btn">
                 <button class="btn btn-default" 
                         id="pull_button" 
@@ -19,10 +25,9 @@
             </span>
         </div>
     </div>
-</div>
-<div class="row">
-    <div class='col-md-12'>
-        <div class="btn-group-vertical btn-group-toggle" style="width:100%" data-toggle="buttons">
+    <div class='col-md-4'></div>
+    <div class='col-md-4' style="margin-bottom:15px">
+        <div class="btn-group btn-group-toggle" style="float:right" data-toggle="buttons">
             <label class="btn btn-info active">
                 <input endpoint='docker://' id="docker" name='pull-source' 
                        autocomplete="off" type="radio" checked>Docker Hub</label>
@@ -41,9 +46,7 @@
     </div>
     <input type="hidden" id="finished-image" style='display:none'></input>
 </div>
-{% endblock %}
 
-{% block main %}
 
 {% include "terminal.html" %}
 
@@ -67,7 +70,7 @@
         $("#pull_button").click(function(){
 
             var csrf_token = "{{ csrf_token() }}";
-            var endpoint = $('.btn-group-vertical > .btn.active > input').attr('endpoint');
+            var endpoint = $('.btn-group > .btn.active > input').attr('endpoint');
             var uri = $('#image-uri').val();
 
             // Send data as form data with xhr

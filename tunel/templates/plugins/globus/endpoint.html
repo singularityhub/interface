@@ -1,0 +1,261 @@
+{% extends "main/main.html" %}
+
+
+{% block sidebar %}
+<div style="margin-top:55px" class="row">
+</div>
+<style>
+.selected-row { background-color: skyblue !important; }
+</style>
+{% endblock %}
+
+{% block main %}
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>{{ endpoint.display_name }}</h3>
+    </div>
+</div>
+
+{% if paths %}
+<div class="row">
+    <div class="col-md-8">
+        <input type="text" id="searchInput" onkeyup="tableSearch()" style="margin-bottom:10px" placeholder="Search names...">
+        <button type="button" style="float:right; margin-bottom:8px; display:none" 
+                id="transfer-button" class="btn btn-primary"><i class="fa fa-arrow-right"></i></button>
+        <p class="alert alert-info" id="message-activate" style="display:none;padding: 8px; margin-left: 10px"></p>
+        <table id="label_table" class="table table-hover table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th></th>
+                <th>group</th>
+                <th>name</th>
+                <th>permissions</th>
+                <th>size</th>
+                <th>last_modified</th>
+                <th>user</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th>group</th>
+                <th>name</th>
+                <th>permissions</th>
+                <th>size</th>
+                <th>last_modified</th>
+                <th>user</th>
+            </tr>
+        </tfoot>
+        <tbody>
+        {% for item in paths %}
+            <tr class="tableRow {% if item.type != 'dir' %}clickable-row{% endif %}" data-path="{{ path }}{{ item.name }}">
+                <td data-search="{{ item.type }}"><i style="color:{% if item.type == 'file' %}cornflowerblue{% else %}lightseagreen{% endif %}" 
+                    class="fa {% if item.type == 'file' %}fa-file{% else %}fa-folder{% endif %}"></i></td>
+                <td data-search="group,{{ item.group }}">{{ item.group }}</td>
+                <td data-search="name,{{ item.name }}">{% if item.type == 'dir' %}
+                   <a href="#" class="folder" data-name="{{ item.name }}" data-path="{{ path }}">{% endif %}
+                   {{ item.name }}</td>{% if item.type == 'dir' %}</a>{% endif %}
+                <td data-search="permissions,{{ item.permissions }}">{{ item.permissions }}</td>
+                <td data-search="size,{{ item.size }}">{{ item.size }}</td>
+                {% set modified = item.last_modified.split(' ') %}
+                <td data-search="modified date,{{ item.last_modified }}">{{ modified[0] }}</td>
+                <td data-search="user,{{ item.user }}">{{ item.user }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <button type="button" 
+                id="transfer-button-upload"
+                style="margin-bottom:10px" 
+                class="btn btn-primary"><i class="fa fa-arrow-left"></i></button>
+        <div class="input-group">
+            <select multiple class="form-control" style="height:200px" id="container-select" name="container">
+            {% for container in images %}    
+            <option value="{{ container.image }}">{{ container.uri }}</option>
+            {% endfor %}
+            </select>
+            <a href="/">
+            <label style="cursor:pointer; text-decoration:none" class="label label-info">containers</label></a>
+         </span>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+
+
+         $("#transfer-button").click(function(){
+
+           var container = $(".selected-row");    
+           console.log(container);
+           
+           // Only continue if the user has selected containers!
+
+           if (container != null){
+
+               var path = $(container).attr('data-path');
+               var csrf_token = "{{ csrf_token() }}";
+               data = {'path': path };
+
+               fetch('/globus/transfer/get/{{ endpoint.id }}', {
+                   headers: { "X-CSRFToken": csrf_token },
+                   credentials: 'same-origin',
+                   body: JSON.stringify(data),
+ 	           method: 'POST' 
+               })
+               .then((response) => response.json())
+               .then(function(data) {
+                  $('#message-activate').html(data.data);
+                  $('#message-activate').show();
+               })
+               .catch(function(err) {
+                  $('#message-activate').html(err);
+                  $('#message-activate').show();
+               });
+
+           } else {
+              message = "Please select a remote container to get by clicking on the row."
+              $('#message-activate').html(message);
+              $('#message-activate').show();
+           }
+
+         })
+
+
+
+         // Transfer Button to upload local image
+
+         $("#transfer-button-upload").click(function(){
+
+           var containers = [];    
+           $("#container-select :selected").each(function(){
+               containers.push($(this).val()); 
+           }); 
+           console.log(containers);
+           
+           // Only continue if the user has selected containers!
+
+           if (containers.length > 0){
+
+               var csrf_token = "{{ csrf_token() }}";
+               data = {'path': "{{ path }}",
+                       'containers': containers}
+
+               fetch('/globus/transfer/put/{{ endpoint.id }}', {
+                   headers: { "X-CSRFToken": csrf_token },
+                   credentials: 'same-origin',
+                   body: JSON.stringify(data),
+ 	           method: 'POST' 
+               })
+               .then((response) => response.json())
+               .then(function(data) {
+                  $('#message-activate').html(data.data);
+                  $('#message-activate').show();
+               })
+               .catch(function(err) {
+                  $('#message-activate').html(err);
+                  $('#message-activate').show();
+               });
+
+           } else {
+              message = "Please select local containers to upload."
+              $('#message-activate').html(message);
+              $('#message-activate').show();
+           }
+
+         })
+
+         // The user can select remote containers based on the selected-row attribute
+
+         $('.clickable-row').click(function() {
+             $(this).addClass('selected-row').siblings().removeClass('selected-row');
+             $("#transfer-button").show();
+         });
+
+         function update_table(folder) {
+
+            var csrf_token = "{{ csrf_token() }}";
+            var path = $(folder).attr('data-path') + $(folder).attr('data-name');
+            console.log(path);
+            fetch('/globus/{{ endpoint.id }}?path=' + path, {
+                headers: { "X-CSRFToken": csrf_token },
+                credentials: 'same-origin',
+ 	        method: 'POST' })
+            .then((response) => response.json())
+            .then(function(data) {
+                console.log(data);
+                $('tbody').html('');
+                var row;                                
+
+                $.each(data.data, function(e, d){
+                    var color = "cornflowerblue";
+                    var icon = "file"
+                    if (d.type == "dir"){
+                        color = "lightseagreen";
+                        icon = "folder"
+                    }
+                    row = '<tr class="tableRow" data-path="'+ data.path + d.name+ '"><td data-search="' + d.type + '"><i style="color:'+ color +'" class="fa fa-' + icon + '"></i></td>'
+                    row +='<td data-search="group,' + d.group + '">' + d.group + '</td><td data-search="name,'+ d.name +'">'
+                    if (d.type == "dir"){
+                      row += '<a href="#" class="folder" onclick="update_table(this)" data-path="'+ data.path +'" data-name="' + d.name + '">' + d.name +'</a>'
+                    } else {
+                      row += d.name
+                    }
+                    row += '</td><td data-search="permissions,' + d.permissions + '">'+ d.permissions +'</td>'
+                    row += '<td data-search="size,'+ d.size +'">'+d.size+'</td><td data-search="modified date,'+ d.last_modified.split(' ')[0] +'">' +d.last_modified.split(' ')[0] + '</td>';
+                    row +='<td data-search="user,'+d.user+'">'+d.user+'</td></tr>'
+                    $('tbody').append(row);
+                })
+             }).catch(function(err) {
+                console.log(err);
+             });
+
+         }
+
+        // If there is an error, the user will be shown by appending here
+        {% if message %}
+            $('#message-activate').append("{{ message }}");
+            $('#message-activate').show();
+        {% endif %}
+
+        // If containers finished transferring
+        {% if events %}
+            $('#message-activate').append("New containers added {% for event in events %}|{{ event }}{% endfor %}");
+            $('#message-activate').show();
+        {% endif %}
+
+        // On click of a path, fetch updated table
+        $(".folder").click(function(){
+            update_table(this);
+        });
+
+
+        function tableSearch() {
+
+            // https://www.w3schools.com/howto/howto_js_filter_table.asp
+
+            var input, filter, table, tr, td, i;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("label_table");
+            tr = table.getElementsByClassName("tableRow");
+
+            for (i = 0; i < tr.length; i++) {
+                $.each(tr[i].children, function(e, child){
+                    text = $(child).attr('data-search');
+                    if (text.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                   } else {
+                        tr[i].style.display = "none";
+                   }
+                })                
+            }
+         }
+    </script>
+{% endblock %}

@@ -82,18 +82,27 @@ if [ "${SREGISTRY_START}" == "yes" ]; then
             # Export that globus is enabled to config
             echo "PLUGIN_GLOBUS_ENABLED=True" >> /code/tunel/config.py
             echo "ROBOTNAME='${ROBOTNAME}'" >> /code/tunel/config.py
+            echo "PLUGIN_GLOBUS_ENDPOINT=\"$(globus endpoint local-id)\"" >> /code/tunel/config.py
            
         fi
 
         # Have we set up config paths yet?
         if [ ! -f "$HOME/.globusonline/lta/config-paths" ]; then
-            echo "${HOME}/.singularity/shub,0,1" >> "${HOME}/.globusonline/lta/config-paths"
+            cp /code/tunel/views/plugins/globus/config-paths "${HOME}/.globusonline/lta/config-paths";
         fi
+        
+    fi
+
+    # If we are doing a restart, the user might not use --globus, check to enable endpoint
+
+    if grep -Fxq "PLUGIN_GLOBUS_ENABLED=True" /code/tunel/config.py
+    then
 
         # When configured, we can start the endpoint
         echo "Starting Globus Connect Personal"
+        export USER="tunel-user"
         /opt/globus/globusconnectpersonal -start &
-        
+
     fi
 
     echo "Starting Registry Portal"

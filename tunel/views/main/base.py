@@ -34,6 +34,7 @@ from werkzeug import secure_filename
 
 from tunel.server import app
 from tunel.views.plugins import generate_plugins
+from sregistry.utils import read_file
 
 import os
 import pwd
@@ -48,18 +49,32 @@ def inject_csrf_token(response):
     return response
 
 
-# LOGGING #####################################################################
+# LOGGING ######################################################################
 
 name = app.config.get('ROBOTNAME')
 file_handler = logging.FileHandler("/tmp/tunel-server-%s.log" %name)
 app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.DEBUG)  
 
-# PLUGINS #####################################################################
+@app.route('/logs', methods=['POST'])
+def logs():
+    '''return a plain text log to parse into any view for the user
+    '''
+
+    logfile = '/tmp/tunel-server-%s.log' %app.config.get('ROBOTNAME')
+    if os.path.exists(logfile):
+        content = read_file(logfile)
+
+    return jsonify({"data": content or "Logs are currently empty.",
+                    "logfile": logfile })
+
+
+# PLUGINS ######################################################################
 
 @app.context_processor
 def add_plugins():
     return dict(plugins=generate_plugins())
+
 
 # Main #########################################################################
 

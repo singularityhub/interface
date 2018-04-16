@@ -103,7 +103,7 @@
                     $.each(lines, function(e,line){
                         var line = "<span class='gray'>" + line + "</span><br>";
                         if (e==lines.length-1){
-                            line = "<a href='/'>" + line + "</a>";
+                            line = "<a href='/container/view?uri=" + uri + "'>" + line + "</a>";
                         }
                         $('.history').append(line);
                     })

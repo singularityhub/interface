@@ -1,53 +1,53 @@
-{% extends "base.html" %}
+{% extends "main/main.html" %}
 
-{% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/generator.css') }}">
+
+{% block sidebar %}
+<div style="margin-top:55px" class="row">
+</div>
 {% endblock %}
 
-{% block content %}
-<div class="perspective effect-rotate-left">
-  <div class="outer-nav--return"></div>
-    <div id="viewport" class="l-viewport">
-      <div class="l-wrapper">
-        <header class="header">
-          <a class="header--logo" href="#0">
-            <p><span style='color:#e32929'>Container</span>Maker</p>
-            <p class="alert alert-info">What do you want this to look like? 
-               <a href="https://www.github.com/singularityhub/interface/issues" target="_blank">Let us know</a></p>
-          </a>
-        </header>
-        <nav class="l-side-nav">
-          <ul class="side-nav">
-            <li class="is-active"><span>Singularity</span></li>
-            <li id='docker-section'><span>Docker</span></li>
-            <li id="home"><span><a href="/">Home</a></span></li></a>
-          </ul>
-        </nav>
 
-        <ul class="l-main-content main-content">
-          <li class="l-section section section--is-active" id='singularity-section'>
-            <div class="work">
-              <h2>Your Recipe</h2>
+{% block main %}
 
+<div class="row">
+    <div class="col-md-12" style="padding-left:25px">
+        <ul class="nav nav-pills" style="float:right">
+            <li id="singularity-link"
+                class="{% if recipetype == 'docker' %}{% else %}active{% endif %}">
+                        <a data-toggle="pill" 
+                           id="pill-singularity" 
+                           href="#singularity-section">Singularity</a></li>
+            <li id="docker-link"
+                class="{% if recipetype == 'docker' %}active{% endif %}"><a data-toggle="pill" 
+                id="pill-docker" 
+                href="#docker-section">Docker</a></li>
+        </ul>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12" style="padding-left:25px">
+        <div class="tab-content">
+            <div id="singularity-section" class="tab-pane fade in {% if recipetype == 'docker' %}{% else %}active{% endif %}">
+ 
                  <!-- Singularity Form-->
                  <form id="singularity-form" action="{{ url_for('generator') }}" method="post">
                       <div class="form-group">
-                          <label for="content" id='recipe-content'>Singularity</label>
+                          <label for="content" id='recipe-content'>Your Singularity Recipe</label>
                           <textarea name="content" 
                                     class="form-control" 
                                     style="height:300px" 
-                                    id="content" rows="300">{{ recipes['singularity'] }}</textarea>
+                                    id="singularity-content" 
+                                    rows="300">{{ recipes['singularity'] }}</textarea>
                           <input type="hidden" name="recipe-kind" value="singularity"/>
                           <hr>
                           <button type="submit" id="singularity" class="btn btn-secondary submit-form">Convert</button>
                           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                          <button type="button" id="build" onclick="showBuild()" class="btn btn-secondary">Build</button>
                       </div>
                   </form>
-          </div>
-          </li>
-          <li class="l-section section" data-type='docker'>
-            <div class="work">
-              <h2>Your Recipe</h2>
+
+            </div>
+            <div id="docker-section" class="tab-pane fade in {% if recipetype == 'docker' %}active{% endif %}">
 
                  <!-- Docker Form -->
                  <form id="docker-form" action="{{ url_for('generator') }}" method="post">
@@ -57,43 +57,44 @@
                       <input type="hidden" name="recipe-kind" value="docker"/>
                       <textarea name="content"
                                 class="form-control" 
-                                style="height:300px" id="content" rows="300">{{ recipes['docker'] }}</textarea>
+                                style="height:300px" 
+                                id="docker-content" rows="300">{{ recipes['docker'] }}</textarea>
                       <hr>
                       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                       <button type="submit" id="docker" class="btn btn-secondary submit-form">Convert</button>
 
-                  </form>
                   </div>
+                  </form>
+
             </div>
-          </li>
-          <li class="l-section section">
-            <div class="work">
-              <h2>Back to It!</h2>
-                 <div class="row">
-                     <div class="col-md-12">
-                     </div>
-                 </div>
-               </div>
-            </div>
-          </li>
-        </ul>
-      </div>
+        </div>
     </div>
-  </div>
 </div>
+{% include "recipe/build-modal.html" %}
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/generator-functions.js') }}"></script>
-    <script type="text/javascript">
-    $('#home').click(function(){
-        document.location = '/'
+<script type="text/javascript">
+
+    // Highlight generator button
+    $('#generator-button').addClass('btn-primary');
+
+    function showBuild() {
+         $("#show-modal").click();
+    }
+
+    $('#docker-link').click(function(){
+        $("#docker-link").addClass('active');
+        $('#singularity-link').removeClass('active');
     })
+
+    $('#singularity-link').click(function(){
+        $("#singularity-link").addClass('active');
+        $('#docker-link').removeClass('active');
+    })
+
     $(document).ready(function() {
-      console.log('<3');
-      if ('{{ recipetype }}' == 'docker' ){
-         $('li#docker-section').click();
-      }
+         console.log('<3');
     });
-    </script>
+</script>
 {% endblock %}

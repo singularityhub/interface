@@ -27,12 +27,13 @@ RUN wget https://s3.amazonaws.com/connect.globusonline.org/linux/stable/globusco
 # Sregistry with Globus
 RUN git clone -b integration/globus https://www.github.com/vsoch/sregistry-cli && \
               cd sregistry-cli && python setup.py install
-#RUN git clone https://www.github.com/singularityhub/sregistry-cli && \
-#              cd sregistry-cli && python setup.py install
+#TODO: use specific version
+RUN git clone https://www.github.com/singularityhub/sregistry-cli && \
+              cd sregistry-cli && python setup.py install
 
 WORKDIR /tmp
-RUN wget https://github.com/singularityware/singularity/releases/download/2.4.3/singularity-2.4.3.tar.gz \
-    && tar -xzf singularity-2.4.3.tar.gz && cd singularity-2.4.3 && ./autogen.sh && ./configure --prefix=/usr/local \
+RUN git clone -b development-2.x https://github.com/singularityware/singularity.git \
+    && cd singularity && ./autogen.sh && ./configure --prefix=/usr/local \
     && make && make install
 
 ADD . /code

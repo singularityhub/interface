@@ -39,6 +39,7 @@
                            autocomplete="off" type="radio">Singularity Hub</label>
         </div>
     </div>
+    <input type="hidden" id="finished-image" style='display:none'></input>
 </div>
 {% endblock %}
 
@@ -65,16 +66,22 @@
 
         $("#pull_button").click(function(){
 
+            var csrf_token = "{{ csrf_token() }}";
             var endpoint = $('.btn-group-vertical > .btn.active > input').attr('endpoint');
             var uri = $('#image-uri').val();
-            var url =  "/action/pull?q=" + uri + '&uri=' + endpoint;
+
+            // Send data as form data with xhr
+            var data = new FormData();
+                data.append('uri', uri);
+                data.append('endpoint', endpoint);
 
             if (uri != "") {
-                console.log(url)
 
                 var prompt = $('.prompt')
                 var xhr = new XMLHttpRequest()
-                xhr.open("GET", url , true)
+                xhr.withCredentials = true;
+                xhr.open("POST", "/action/pull" , true)
+                xhr.setRequestHeader("X-CSRFToken", csrf_token);
 
                 // Hide status buttons, show running state
                 $("#box").text("") 
@@ -83,13 +90,35 @@
                 // On finish, reload page
                 xhr.onloadend = function () {
                     var prompt = $('.prompt')
+                    var uri = $('#image-uri').val();
+
                     $("#box").text("done") 
                     showButton('green');
+                    var finished_image = $("#finished-image").text();
+
+                    var csrf_token = "{{ csrf_token() }}";
+                    data = {'uri': uri,
+                            'container': finished_image}
+
+                   fetch('/action/add', {
+                       headers: { "X-CSRFToken": csrf_token },
+                       credentials: 'same-origin',
+                       body: JSON.stringify(data),
+ 	               method: 'POST' 
+                   })
+                   .then((response) => response.json())
+                   .then(function(data) {
+                       console.log(data);
+                   })
+                  .catch(function(err) {
+                       console.log(data);
+                   });
+
                 }
 
                 // First message to user
                 prompt.typed({
-                    strings: ["Pulling " + uri + '... (see docker logs for progress)...'],
+                    strings: ["Pulling " + uri + '...'],
                     typeSpeed: 1,
                 })
 
@@ -101,16 +130,35 @@
                     $('.typed-cursor').text('');
 
                     $.each(lines, function(e,line){
-                        var line = "<span class='gray'>" + line + "</span><br>";
-                        if (e==lines.length-1){
-                            line = "<a href='/container/view?uri=" + uri + "'>" + line + "</a>";
+
+                        // The last line is the pulled image to add to sregistry
+                        $("#finished-image").text(line);
+
+                        // Handle coloring
+                        line = line.replace('[33m(B[m[33m(B[m[33m(B[m','');
+
+                        // Progress Bar
+                        if (line.startsWith("Progress")) {
+                            $('.history').last(line);
+
+                        } else {
+
+                            var line = "<span class='gray'>" + line + "</span><br>";
+                            if (e==lines.length-1){
+                                line = "<a href='/container/view?uri=" + uri + "'>" + line + "</a>";
+                            }
+
+                            $('.history').append(line);
                         }
-                        $('.history').append(line);
+ 
                     })
                     prompt.html('');
                     $('section.terminal').scrollTop($('section.terminal').height());
+                    
                 }
-                xhr.send()
+
+                xhr.send(data)
+
             } else {
                 $('.history').html('$ Please enter a valid unique resource identifier (uri) <br>');
             }

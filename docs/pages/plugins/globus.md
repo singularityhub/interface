@@ -9,13 +9,15 @@ toc: false
 ## Globus
 If you want to create a <a href="https://globus.org" target="_blank">Globus</a> 
 endpoint, you can issue these commands after start to
-authenticate your container to access your endpoints:
+authenticate your container to access your endpoints. This first code
+is used to generate the endpoint:
 
 ```bash
 $ docker exec -it tunel bash /code/script/globus-create.sh
 ```
 
-If you want to update your tokens, a script is also provided.
+The second authorization is to generate refresh tokens for tunel itself! After
+you create the endpoint, issue these commands and restart the container.
 
 ```bash
 $ docker exec -it tunel python /code/script/update_tokens.py globus

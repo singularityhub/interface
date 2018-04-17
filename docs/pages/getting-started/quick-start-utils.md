@@ -6,7 +6,21 @@ permalink: /quick-start-utils
 toc: false
 ---
 
+Once you've finished pulls and builds, you will have a local registry of containers!
+You can browse to [http://127.0.0.1/]() to see your updated table. Do you want to rename
+any of the containers? Just click the box
+
+![img/quickstart/quickstart-15.png](img/quickstart/quickstart-15.png)
+
+type the new name, and confirm your decision. You'll see the change in the interface
+and a message that it was done.
+
+![img/quickstart/quickstart-16.png](img/quickstart/quickstart-16.png)
+
+
+
 # Logging
+
 Did something go wrong? You can always click on "logs" in the lower right to
 see the current server logs.
 

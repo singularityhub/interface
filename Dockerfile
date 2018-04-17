@@ -12,9 +12,7 @@ RUN apt-get -y install build-essential
 RUN apt-get -y install apt-utils cmake wget unzip libffi-dev libssl-dev \
                        libtool autotools-dev automake autoconf git \
                        libarchive-dev squashfs-tools uuid-dev \
-                       vim jq aria2 nginx
-
-RUN apt update && apt install python2 # just until globusonline updated
+                       vim jq aria2 nginx python
 
 ENV PATH /opt/conda/bin:$PATH
 RUN mkdir /code && mkdir /data && ln -s /opt/conda/bin/python /usr/bin/python

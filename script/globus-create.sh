@@ -64,12 +64,10 @@ fi
 # to naming of this endpoint, so we re-generate (and get a new log file)
 echo "ROBOTNAME='${ROBOTNAME}'" >> /code/tunel/config.py
 
-    ENDPOINT_ID=$(globus endpoint local-id)
-    if [ $ENDPOINT_ID != "No Globus Connect Personal installation found." ]; then
-        echo "PLUGIN_GLOBUS_ENDPOINT=\"${ENDPOINT_ID}\"" >> /code/tunel/config.py
-    fi    
-       
-fi
+ENDPOINT_ID=$(globus endpoint local-id)
+if [ $ENDPOINT_ID != "No Globus Connect Personal installation found." ]; then
+    echo "PLUGIN_GLOBUS_ENDPOINT=\"${ENDPOINT_ID}\"" >> /code/tunel/config.py
+fi    
 
 # Have we set up config paths yet?
 if [ ! -f "$HOME/.globusonline/lta/config-paths" ]; then

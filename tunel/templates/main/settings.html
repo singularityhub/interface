@@ -20,9 +20,8 @@
     <div class="col-md-12">
         <div class="card" style="padding:20px">
             <div class="header">
-                <a href="#">
-                 <h3 class="title">Singularity Global Endpoints
-                  </h3></a>
+                 <h3 class="title">Singularity Global Client Endpoints
+                  </h3>
                   <span style='float:right'>
                   <a href='/api/containers'><button class="btn btn-default">API</button></a>
                   <a href='/pull'><button class="btn btn-default">Pull</button></a>
@@ -75,7 +74,7 @@
                      id="nvidiaToken" 
                      name="nvidiaToken"
                      aria-describedby="nvidiaHelp" 
-                     placeholder="Enter Nvidia token">{% if nvidia %}Your token has been set{% endif %}
+                     placeholder="{% if nvidia %}Your token has been set, not shown here for privacy.{% else %}Enter Nvidia token{% endif %}">
               <small id="nvidiaHelp" 
                      class="form-text text-muted">Your token will be cached in your home .sregistry credentials file.</small>
               <input type="submit" id="nvidia_submit" style="margin-top:20px">

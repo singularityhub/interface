@@ -43,6 +43,14 @@
                           <button type="submit" id="singularity" class="btn btn-secondary submit-form">Convert</button>
                           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                           <button type="button" id="build" onclick="showBuild()" class="btn btn-secondary">Build</button>
+                          <!--<button type="button" 
+                                  id="share-docker" 
+                                  onclick="shareCodepen('singularity')" 
+                                  style="float:right"
+                                  class="btn btn-default ">
+                                  <i class="fa fa-codepen"
+                                     title="Share on Codepen"></i></button>-->
+
                       </div>
                   </form>
 
@@ -57,11 +65,17 @@
                       <input type="hidden" name="recipe-kind" value="docker"/>
                       <textarea name="content"
                                 class="form-control" 
-                                style="height:300px" 
+                                style="height:300px"
                                 id="docker-content" rows="300">{{ recipes['docker'] }}</textarea>
                       <hr>
                       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                       <button type="submit" id="docker" class="btn btn-secondary submit-form">Convert</button>
+                      <!--<button type="button" 
+                              style="float:right"
+                              id="share-docker" 
+                              onclick="shareCodepen('docker')">
+                                  <i class="fa fa-codepen"
+                                     title="Share on Codepen"></i></button>-->
 
                   </div>
                   </form>
@@ -71,6 +85,7 @@
     </div>
 </div>
 {% include "recipe/build-modal.html" %}
+
 {% endblock %}
 
 {% block scripts %}

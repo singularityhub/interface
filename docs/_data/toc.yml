@@ -1,12 +1,12 @@
   - title: "Home"
     url: "/interface/"
     slug: interface
-  - title: "Interface"
-    url: "/interface/ui"
-    slug: interface
   - title: "Getting Started"
     url: "/interface/quick-start"
     slug: quick-start
+  - title: "Globus"
+    url: "/interface/plugin-globus"
+    slug: globus
   - title: "Development"
     url: "/interface/development"
     slug: development

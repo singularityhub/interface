@@ -1,6 +1,5 @@
 {% extends "main/main.html" %}
 
-
 {% block sidebar %}
 <div style="margin-top:55px" class="row">
 </div>
@@ -88,7 +87,7 @@
  
 <!-- Needs to authenticate with code -->
 <div class="row">
-    <div class="col-md-5" style="margin:auto;">
+    <div class="col-md-6" style="margin:auto;">
 
        <div id='update-section' style="margin:auto; padding-top:75px">
             <img style="margin:auto; padding-bottom:30px; display:block; width:300px; margin:auto" src="{{ url_for('static', filename='img/plugin-globus.png') }}">
@@ -96,7 +95,6 @@
             <p class="well">
                 <strong># the container name is "tunel," type docker ps to see the name</strong><br>
                 docker exec -it tunel python /code/script/update_tokens.py<br>
-                # If you continue to receive this message, please restart the container:<br>
                 docker restart tunel
             </p>
             <p>When you have updated your tokens, reload the page.</p>

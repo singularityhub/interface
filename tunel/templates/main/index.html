@@ -27,6 +27,7 @@
                 <th>Location</th>
                 <th>Client</th>
                 <th>Container</th>
+                <th></th>
             </tr>
         </thead>
         <tfoot>
@@ -34,6 +35,7 @@
                 <th>Location</th>
                 <th>Client</th>
                 <th>Container</th>
+                <th></th>
             </tr>
         </tfoot>
         <tbody>
@@ -44,6 +46,8 @@
                 <td class="change-uri" 
                     style="cursor:text" 
                     data-search="{{ image.uri }}" contenteditable>{{ image.uri }}</td>
+                <td><a href="/container/view?uri={{ image.uri }}">
+                    <span class="label label-primary">view</span></td>
             </tr>
             {% endfor %}
         </tbody>

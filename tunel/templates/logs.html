@@ -1,6 +1,6 @@
 <!-- Hidden button to show logs-->
 <a href="#" 
-   id="show-modal" 
+   id="show-logs-modal" 
    class="btn btn-lg btn-primary" 
    style="display:none" 
    data-toggle="modal" 
@@ -41,17 +41,18 @@
               credentials: 'same-origin',
               method: 'POST' 
            })
-           .then((response) => response.json())
+           .then((response) => response.text())
            .then(function(data) {
-              console.log(data);
+              data = data.split('\n');
+              var logfile = data[0];
               var logs = ''
-              $.each(data.data, function(e, i){
+              $.each(data, function(e, i){
                   logs+=i + "<br>";
               })
               $('#tunel-logs').html(logs);
-              $('#tunel-logs-title').html("Tunel Logs: " + data.logfile);
-              $('#tunel-command').html("docker exec tunel cat " + data.logfile);
-              $('#show-modal').click();
+              $('#tunel-logs-title').html("Tunel Logs: " + logfile);
+              $('#tunel-command').html("docker exec tunel cat " + logfile);
+              $('#show-logs-modal').click();
            }).catch(function(err) {
               console.log(err);
            });

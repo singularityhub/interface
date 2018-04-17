@@ -15,7 +15,6 @@ RUN apt-get -y install apt-utils cmake wget unzip libffi-dev libssl-dev \
                        vim jq aria2 nginx python
 
 ENV PATH /opt/conda/bin:$PATH
-RUN mkdir /code && mkdir /data && ln -s /opt/conda/bin/python /usr/bin/python
 
 # Install Globus Personal Connect
 

@@ -75,7 +75,7 @@
                      id="nvidiaToken" 
                      name="nvidiaToken"
                      aria-describedby="nvidiaHelp" 
-                     placeholder="Enter Nvidia token">
+                     placeholder="Enter Nvidia token">{% if nvidia %}Your token has been set{% endif %}
               <small id="nvidiaHelp" 
                      class="form-text text-muted">Your token will be cached in your home .sregistry credentials file.</small>
               <input type="submit" id="nvidia_submit" style="margin-top:20px">
@@ -107,11 +107,17 @@
     $("#nvidia_submit").click(function(){
 
          console.log("Submit Nvidia Token")
+         var csrf_token = "{{ csrf_token() }}";
          var token = $("#nvidiaToken").val();
-         fetch('/set/settings?nvidia=' + token, {
- 	     method: 'GET'
-         }).then(function(response) {
-            console.log(response)
+
+         fetch('/set/settings, {
+             headers: { "X-CSRFToken": csrf_token },
+             credentials: 'same-origin',
+             body: JSON.stringify({'nvidia': token}),
+ 	     method: 'POST'
+         .then((response) => response.json())
+         .then(function(data) {
+            console.log(data)
             $('#nvidia-alert').html('Your Nvidia token has been updated.');
             $('#nvidia-alert').show();
          }).catch(function(err) {

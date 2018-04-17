@@ -3,7 +3,7 @@ layout: default
 title: Getting Started
 pdf: true
 permalink: /quick-start
-toc: true
+toc: false
 ---
 
 # Quick Start
@@ -46,8 +46,6 @@ greeted by the robot!
 
 ![img/quickstart/quickstart-1.png](img/quickstart/quickstart-1.png)
 
-We will continue the tutorial by trying out a pull and building from a recipe. 
-If you want to first see more about globus, see the the [Globus plugin](/interface/plugin-globus) documentation page.
 
 <strong>Why should I map a folder?<strong>
 
@@ -76,182 +74,18 @@ TLDR:
 > The folder mapped to `data` is the primary connection between the Tunel interface
 and your host!
 
-<hr>
+We will continue the tutorial by trying out a pull and building from a recipe. 
+If you want to first see more about globus, see the the [Globus plugin](/interface/plugin-globus) documentation page.
 
-## Pull Containers
-Let's start with the basics. We want to pull a container! If you click on the "pull" button
-in the interface, you will be taken to the pull interface. It's very simple - you write the
-unique resource identifier (uri) such as `library/ubuntu:latest` in the box in the top
-left, and then select the build endpoint, one of:
+<strong>Where to Go Next</strong>
 
- - Docker Hub
- - Singularity Hub
- - Nvidia GPU Cloud
-
-![img/quickstart/quickstart-2.png](img/quickstart/quickstart-2.png)
-
-We will be adding <a href="https://singularityhub.github.io/sregistry-cli/clients" target="_blank">other endpoints</a> 
-as they are <a href="{{ site.github }}/issues" target="_blank">requested</a>. Let's pull an image, `vanessa/algorithms:fireworks`. It's on Docker Hub, so we select the first button in the top right.
-
-![img/quickstart/quickstart-3.png](img/quickstart/quickstart-3.png)
-
-Then we click pull!
-
-![img/quickstart/quickstart-4.png](img/quickstart/quickstart-4.png)
-
-When your container is done, *the last line* is a link to view it:
-
-![img/quickstart/quickstart-5.png](img/quickstart/quickstart-5.png)
-
-Clicking the link will show the container view. 
-
-![img/quickstart/quickstart-6.png](img/quickstart/quickstart-6.png)
-
-Right now this is just metadata, but we'd like
-to customize this view to be meaningful and fun for you! <a href="https://www.github.com/singularityhub/interface/issues" target="_blank">Let @vsoch know</a> what you would like to see here!
-
-<strong>Where is the container?</strong>
-
-Remember, when you've pulled containers, they are accessible in and outside of the
-container.
-
-```bash
-# outside the container
-$ ls data/.singularity/shub
-vanessa  vanessa-algorithms:fireworks.simg
-```
-```bash
-# inside the container (recommended)
-$ docker exec -it tunel bash
-$ sregistry images
-Containers:   [date]   [location]  [client]	[uri]
-1  April 16, 2018	local 	   [hub]	vanessa/algorithms:fireworks@7e71bb28a238b74c816a74a12b6509cc
-$ container=vanessa/algorithms:fireworks@7e71bb28a238b74c816a74a12b6509cc
-$ sregistry get $container
-# /root/.singularity/shub/vanessa-algorithms:fireworks.simg
-singularity run --contain /root/.singularity/shub/vanessa-algorithms:fireworks.simg --boum
-```
-
-You are most likely going to want to use Tunel on your laptop where you can easily
-build and pull, and then transfer elsewhere that you cannot (like your local cluster resource.) 
-We will discuss this more in detail when we talk about [Globus endpoints](/interface/plugin-globus).
+ - [Pull containers](/interface/quick-start-pull)
+ - [Build containers](/interface/quick-start-build)
+ - [Logging and utils](/interface/quick-start-utils)
+ - [Development and API](/interface/development)
 
 <hr>
-
-## Build Containers
-Cool! We can also use Tunel to work with Singularity recipes, which means:
-
- - Convert from Dockerfile to Singularity, or vice versa
- - Build a Singularity container from the interface!
-
-Click on the Build tab to see the builder interface.
-
-![img/quickstart/quickstart-7.png](img/quickstart/quickstart-7.png)
-
-It's fairly simple. You want to select the correct tab (Dockerfile or Singularity)
-that matches the recipe you are starting from. When you click convert, the recipe
-will be converted to the other type. When you click build (Singularity only!) you will first
-be asked to enter a unique resource identifier (a name for your container)
-
-![img/quickstart/quickstart-8.png](img/quickstart/quickstart-8.png)
-
-and then click "Build Away Merrill!" to start the build. The
-recipe will be built, and show you the output in the modal:
-
-![img/quickstart/quickstart-9.png](img/quickstart/quickstart-9.png)
-
-At the bottom, you can again click a link to see the finished container:
-
-![img/quickstart/quickstart-10.png](img/quickstart/quickstart-10.png)
-
-<br>
-<hr>
-
-
-## Logging
-Did something go wrong? You can always click on "logs" in the lower right to
-see the current server logs.
-
-![img/quickstart/quickstart-11.png](img/quickstart/quickstart-11.png)
-
-You might next want to transfer your images to your local cluster. To do this,
-we recommend using Tunel with the [globus plugin](/interface/plugin-globus).
-
-You might also want to interact with the containers from inside the tunel Docker
-container, or from the host! We recommend interaction from within the
-Tunel container, discussed next.
-
-<br>
-<hr>
-
-
-## Singularity Registry
-The Tunel interface is running a local Singularity Global Client, and this is
-the <a href="https://singularityhub.github.io/sregistry-cli" target="_blank">containertools solution</a> 
-for the single user to have a small local database of organized conatainers. 
-This is a smaller database compared to the more substantial, open source
-<a href="https://singularityhub.github.io/sregistry" target="_blank">Singularity Registry</a>
-that your institution might choose to deploy. This means that to interact with your 
-database easily, you can shell inside the container. In
-the following example, we are still using the container called "tunel."
-
-```
-$ docker exec -it tunel bash
-root@c4e7d18b362b:/code# sregistry shell
-[client|hub] [database|sqlite:////root/.singularity/sregistry.db]
-Python 3.6.2 |Anaconda, Inc.| (default, Sep 22 2017, 02:03:08) 
-Type 'copyright', 'credits' or 'license' for more information
-IPython 6.2.1 -- An enhanced Interactive Python. Type '?' for help.
-
-In [1]: client.speak()
-[client|hub] [database|sqlite:////root/.singularity/sregistry.db]
-```
-
-The client above that is loaded by default with `sregistry shell` is the
-<a href="https://singularityhub.github.io/sregistry-cli" target="_blank">Singularity Global Client</a>.
-Try pulling an image. It will show up in your interface.
-
-```
-In [3]: client.pull('vsoch/hello-world')
-Progress |===================================| 100.0% 
-2.4.3-dist
-{
-    "data": {
-        "attributes": {
-            "deffile": "Bootstrap: docker\nFrom: ubuntu:14.04\n\n%labels\nMAINTAINER vanessasaur\nWHATAMI dinosaur\n\n%environment\nDINOSAUR=vanessasaurus\nexport DINOSAUR\n\n%files\nrawr.sh /rawr.sh\n\n%runscript\nexec /bin/bash /rawr.sh\n",
-            "help": null,
-            "labels": {
-                "org.label-schema.usage.singularity.deffile.bootstrap": "docker",
-                "MAINTAINER": "vanessasaur",
-                "org.label-schema.usage.singularity.deffile": "Singularity",
-                "org.label-schema.schema-version": "1.0",
-                "WHATAMI": "dinosaur",
-                "org.label-schema.usage.singularity.deffile.from": "ubuntu:14.04",
-                "org.label-schema.build-date": "2017-10-15T12:52:56+00:00",
-                "org.label-schema.usage.singularity.version": "2.4-feature-squashbuild-secbuild.g780c84d",
-                "org.label-schema.build-size": "333MB"
-            },
-            "environment": "# Custom environment shell code should follow\n\nDINOSAUR=vanessasaurus\nexport DINOSAUR\n\n",
-            "runscript": "#!/bin/sh \n\nexec /bin/bash /rawr.sh\n",
-            "test": null
-        },
-        "type": "container"
-    }
-}
-[container][new] vsoch/hello-world:latest@ed9755a0871f04db3e14971bec56a33f
-Success! /root/.singularity/shub/vsoch-hello-world:latest@ed9755a0871f04db3e14971bec56a33f.simg
-Out[3]: '/root/.singularity/shub/vsoch-hello-world:latest@ed9755a0871f04db3e14971bec56a33f.simg'
-```
-
-When you interact in the online interface or on the command line, we will be
-updating the same database. This is really great, because it means lots of avenues
-for interaction between your command line and all those webby things.
-
-Next, you can read up on [development](/interface/development), which has handy practices
-for making changes, and debugging, or you can read about [the Globus endpoint](/interface/plugin-globus)
-for easily transferring containers between your local computer and cluster endpoints.
-
 <div>
-    <a href="/interface"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/interface/quick-start-pull"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
     <a href="/interface/development"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
 </div><br>

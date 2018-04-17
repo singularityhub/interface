@@ -62,6 +62,9 @@ Your Tunel servers an API for all containers, just navigate to [http://127.0.0.1
 If you are a developer and would like to see particular developer hints and tutorials here,
 please <a href="https://github.com/singularityhub/interface/issues" target="_blank">let me know</a>.
 
+ - [Quick start](/interface/quick-start)
+ - [Globus plugin](/interface/plugin-globus)
+
 <div>
     <a href="/interface/quick-start"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
     <a href="/interface/plugin-globus"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>

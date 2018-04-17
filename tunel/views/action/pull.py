@@ -49,9 +49,28 @@ def action_pull():
 
     app.logger.info("PULL for %s" %container)
 
-    # We will stream the response back!
-    image, puller = Client.pull(container, stream=True, pull_folder='/tmp')
-    puller = itertools.chain(puller, [image])
+    # If nvidia is used, use sregistry client
+    if 'nvidia' in uri:
+        nvidia = app.sregistry._get_setting('SREGISTRY_NVIDIA_TOKEN')
+
+        # Make sure we use the right client
+        os.environ['SREGISTRY_CLIENT'] = uri.replace('://','')
+        os.environ.putenv('SREGISTRY_CLIENT', uri.replace('://',''))
+        from sregistry.main import get_client
+        client = get_client(image=container)
+        app.logger.info("Using client %s" %client.client_name)
+
+        try:
+            puller = client.pull(container, force=True)
+        except:
+            puller = '''ERROR: manifest unknown, or pull error. 
+                            Use docker-compose logs web to see issue!'''
+        
+
+    else:
+        # We will stream the response back!
+        image, puller = Client.pull(container, stream=True, pull_folder='/tmp')
+        puller = itertools.chain(puller, [image])
         
     return Response(puller, mimetype='text/plain')
 

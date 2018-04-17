@@ -7,18 +7,24 @@ toc: false
 ---
 
 ## Globus
-If you started your container with the `--globus` flag, then the container will
-be configured with a new Globus endpoint:
+If you want to create a <a href="https://globus.org" target="_blank">Globus</a> 
+endpoint, you can issue these commands after start to
+authenticate your container to access your endpoints:
 
-
+```bash
+$ docker exec -it tunel bash /code/script/globus-create.sh
 ```
-$ docker run --name tunel -d -p 80:80 --privileged -v data:/root vanessa/tunel start --globus
-```
 
-You would then want to authenticate your container to access your endpoints.
+If you want to update your tokens, a script is also provided.
 
-```
+```bash
 $ docker exec -it tunel python /code/script/update_tokens.py globus
+```
+
+And if you need to restart the container:
+
+```bash
+$ docker restart tunel
 ```
 
 <hr>
@@ -30,8 +36,10 @@ see instructions in the interface.
 
 ![img/plugin-globus-update-tokens.png](img/globus/update-tokens.png)
 
-But if you issued this command when you created the container, since we retrieve
-a refresh token you shouldn't need to do this twice. Instead, you should see 
+If you have a Globus endpoint, this means that you should issue the commands 
+to `update_tokens.py`. If you didn't make one entirely, then start
+with `globus-create.sh`. A token coincides with a refresh token so 
+you shouldn't need to do this twice. Instead, you should see 
 a table of endpoints under scope `my-endpoints` and `shared-with-me`.
 
 ![img/globus-endpoints.png](img/globus/globus-endpoints.png)

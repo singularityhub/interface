@@ -8,20 +8,15 @@ usage () {
           Commands:
              help: show help and exit
              start: the application
-             
-          Options:
-             --ename: the endpoint name. If not specified, will make a funny one
-             --globus: enable globus login
-         
+                      
           Examples:
-              docker run -d -p 80:80 --privileged -v data:/home/tunel-user/.singularity <container> start
+              docker run --name tunel -d -p 80:80 --privileged -v data:/home/tunel-user/.singularity <container> start
+              docker exec -it tunel bash /code/scripts/globus_create_endpoint.sh
          "
 }
 
 SREGISTRY_START="no"
 ROBOTNAME=$(python /code/script/robotnamer.py)
-ENDPOINT="sregistry-${ROBOTNAME}"
-GLOBUSENABLED="no"
 export ROBOTNAME
 
 if [ $# -eq 0 ]; then
@@ -62,48 +57,13 @@ done
 
 if [ "${SREGISTRY_START}" == "yes" ]; then
 
-
-    # Globus Personal Endpoint
-  
-    if [ "${GLOBUSENABLED}" == "yes" ]; then
-
-        # Bug with getting $USER, see https://github.com/globus/globus-cli/issues/394
-        export USER="tunel-user"
-
-        if [ ! -f "$HOME/.globus.cfg" ]; then
-            echo "Logging in to Globus"
-
-            globus login --no-local-server
-
-            echo "Generating Globus Personal Endpoint"
-            token=$(globus endpoint create --personal "${ENDPOINT}" --jmespath 'globus_connect_setup_key'  | tr -d '"') 
-            /opt/globus/globusconnectpersonal -setup "${token}"
-            python /code/script/update_tokens.py globus
-
-            # Export that globus is enabled to config
-            if ! grep -q PLUGIN_GLOBUS_ENABLED /code/tunel/config.py; then
-                echo "PLUGIN_GLOBUS_ENABLED=True" >> /code/tunel/config.py
-            fi
-
-            if ! grep -q ROBOTNAME /code/tunel/config.py; then
-                echo "ROBOTNAME='${ROBOTNAME}'" >> /code/tunel/config.py
-            fi
-
-            ENDPOINT_ID=$(globus endpoint local-id)
-            if [ $ENDPOINT_ID != "No Globus Connect Personal installation found." ]; then
-                echo "PLUGIN_GLOBUS_ENDPOINT=\"${ENDPOINT_ID}\"" >> /code/tunel/config.py
-            fi    
-       
-        fi
-
-        # Have we set up config paths yet?
-        if [ ! -f "$HOME/.globusonline/lta/config-paths" ]; then
-            cp /code/tunel/views/plugins/globus/config-paths "${HOME}/.globusonline/lta/config-paths";
-        fi
-        
+    # If we don't have one already, generate a robot name
+    if ! grep -q "ROBOTNAME=" /code/tunel/config.py
+    then
+        echo "ROBOTNAME='${ROBOTNAME}'" >> /code/tunel/config.py
     fi
 
-    # If we are doing a restart, the user might not use --globus, check to enable endpoint
+    # If we are doing a restart, check if globus enabled
 
     if grep -Fxq "PLUGIN_GLOBUS_ENABLED=True" /code/tunel/config.py
     then

@@ -17,11 +17,10 @@ handling organization, management, and interaction with endpoints like Google Dr
 
 ## Start Tunel
 In order to access our containers from the host, we are going to map some local folder `data` to `/root`
-in the container. If you want to connect to <a href="https://globus.org" target="_blank">Globus</a> 
-then add the  `--globus` flag.
+in the container. 
 
 ```bash
-$ docker run --name tunel -d -p 80:80 --privileged -v $PWD/data:/root vanessa/tunel start --globus
+$ docker run --name tunel -d -p 80:80 --privileged -v $PWD/data:/root vanessa/tunel start
 ```
 
 Notice how we have given it a name with `--name` so we can easily reference it later as "tunel."
@@ -33,10 +32,12 @@ $ docker inspect tunel
 $ docker restart tunel
 ```
 
-If you started with globus, authenticate your container to access your endpoints, and restart.
-If you don't do this now, the interface will tell you to do it later!
+If you want to create a <a href="https://globus.org" target="_blank">Globus</a> 
+endpoint, you can issue these commands after start to
+authenticate your container to access your endpoints, and restart.
 
 ```
+$ docker exec -it tunel bash /code/script/globus-create.sh
 $ docker exec -it tunel python /code/script/update_tokens.py globus
 $ docker restart tunel
 ```

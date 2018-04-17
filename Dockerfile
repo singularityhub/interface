@@ -3,16 +3,18 @@ MAINTAINER vsochat@stanford.edu
 
 # docker build -t vanessa/tunel .
 
+ENV DEBIAN_FRONTEND noninteractive
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
+
 RUN apt-get update 
 RUN apt-get -y install build-essential
 RUN apt-get -y install apt-utils cmake wget unzip libffi-dev libssl-dev \
                        libtool autotools-dev automake autoconf git \
                        libarchive-dev squashfs-tools uuid-dev \
-                       vim jq aria2 nginx python2 # python2 just until globusonline updated
+                       vim jq aria2 nginx
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
+RUN apt update && apt install python2 # just until globusonline updated
 
 ENV PATH /opt/conda/bin:$PATH
 RUN mkdir /code && mkdir /data && ln -s /opt/conda/bin/python /usr/bin/python

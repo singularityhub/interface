@@ -57,7 +57,7 @@ app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.DEBUG)  
 
 @app.route('/logs', methods=['POST'])
-def logs():
+def logs(content=''):
     '''return a plain text log to parse into any view for the user
     '''
 
@@ -65,8 +65,13 @@ def logs():
     if os.path.exists(logfile):
         content = read_file(logfile)
 
-    return jsonify({"data": content or "Logs are currently empty.",
-                    "logfile": logfile })
+    if not isinstance(content,list):
+        content=[content]
+
+    # Add the name of the log as the first line
+    content=[logfile + '\n']+content
+
+    return Response(content, status=200, mimetype='text/plain')
 
 
 # PLUGINS ######################################################################

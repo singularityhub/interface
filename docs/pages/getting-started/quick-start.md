@@ -3,22 +3,19 @@ layout: default
 title: Getting Started
 pdf: true
 permalink: /quick-start
-toc: false
+toc: true
 ---
 
-## Quick Start
+# Quick Start
+
 We are going to be using a <a href="https://hub.docker.com/r/vanessa/tunel/" target="_blank">container</a> 
-from Docker Hub, so the only dependency is that you have installed Docker.
-
-
-### Overview
-The basic idea is that we are going to run a <a href="https://hub.docker.com/r/vanessa/tunel/" target="_blank">Docker container</a> that
-inside contains the Singularity software (build, and interact with containers), and the 
+from Docker Hub, so the only dependency is that you have installed Docker. Inside this container you
+are provided with the Singularity software (build, and interact with containers), and the 
 <a href="https://singularityhub.github.io/sregistry-cli">Singularity Global Client</a> to manage
 them. These two work as a tag team, with Singularity handling builds and pulls, and sregistry
 handling organization, management, and interaction with endpoints like Google Drive or Globus.
 
-### Start Tunel
+## Start Tunel
 In order to access our containers from the host, we are going to map some local folder `data` to `/root`
 in the container. If you want to connect to <a href="https://globus.org" target="_blank">Globus</a> 
 then add the  `--globus` flag.
@@ -52,13 +49,15 @@ greeted by the robot!
 We will continue the tutorial by trying out a pull and building from a recipe. 
 If you want to first see more about globus, see the the [Globus plugin](/interface/plugin-globus) documentation page.
 
-__Why should I map a folder?_
-The bind of a local directory (specified with (`-v`)) is so that your containers 
+<strong>Why should I map a folder?<strong>
+
+The bind of a local directory (specified with `-v`) is so that your containers 
 and tiny database can be seen from your host! If you don't map a volume,
 the registry will work fine to pull and build containers, but you won't see them on your local machine.
 Also, when you stop and remove the container you take the Singularity images with it. 
 
-_Where are the containers?_
+<strong>Where are the containers?<strong>
+
 Given that you have mapped a volume `data`, any containers that you generate or pull with Tunel will be available
 in the folder data/.singularity/shub, which is the storage base. For example:
 
@@ -77,7 +76,9 @@ TLDR:
 > The folder mapped to `data` is the primary connection between the Tunel interface
 and your host!
 
-### Pull Containers
+<hr>
+
+## Pull Containers
 Let's start with the basics. We want to pull a container! If you click on the "pull" button
 in the interface, you will be taken to the pull interface. It's very simple - you write the
 unique resource identifier (uri) such as `library/ubuntu:latest` in the box in the top
@@ -89,8 +90,8 @@ left, and then select the build endpoint, one of:
 
 ![img/quickstart/quickstart-2.png](img/quickstart/quickstart-2.png)
 
-Let's pull an image, `vanessa/algorithms:fireworks`. It's on Docker Hub, so we select that
-button:
+We will be adding <a href="https://singularityhub.github.io/sregistry-cli/clients" target="_blank">other endpoints</a> 
+as they are <a href="{{ site.github }}/issues" target="_blank">requested</a>. Let's pull an image, `vanessa/algorithms:fireworks`. It's on Docker Hub, so we select the first button in the top right.
 
 ![img/quickstart/quickstart-3.png](img/quickstart/quickstart-3.png)
 
@@ -98,7 +99,7 @@ Then we click pull!
 
 ![img/quickstart/quickstart-4.png](img/quickstart/quickstart-4.png)
 
-When your container is done, you will see a link to view it:
+When your container is done, *the last line* is a link to view it:
 
 ![img/quickstart/quickstart-5.png](img/quickstart/quickstart-5.png)
 
@@ -109,7 +110,8 @@ Clicking the link will show the container view.
 Right now this is just metadata, but we'd like
 to customize this view to be meaningful and fun for you! <a href="https://www.github.com/singularityhub/interface/issues" target="_blank">Let @vsoch know</a> what you would like to see here!
 
-_Where is the container?_
+<strong>Where is the container?</strong>
+
 Remember, when you've pulled containers, they are accessible in and outside of the
 container.
 
@@ -130,7 +132,13 @@ $ sregistry get $container
 singularity run --contain /root/.singularity/shub/vanessa-algorithms:fireworks.simg --boum
 ```
 
-### Build Containers
+You are most likely going to want to use Tunel on your laptop where you can easily
+build and pull, and then transfer elsewhere that you cannot (like your local cluster resource.) 
+We will discuss this more in detail when we talk about [Globus endpoints](/interface/plugin-globus).
+
+<hr>
+
+## Build Containers
 Cool! We can also use Tunel to work with Singularity recipes, which means:
 
  - Convert from Dockerfile to Singularity, or vice versa
@@ -156,13 +164,15 @@ At the bottom, you can again click a link to see the finished container:
 
 ![img/quickstart/quickstart-10.png](img/quickstart/quickstart-10.png)
 
-### Logging
+<br>
+<hr>
+
+
+## Logging
 Did something go wrong? You can always click on "logs" in the lower right to
 see the current server logs.
 
 ![img/quickstart/quickstart-11.png](img/quickstart/quickstart-11.png)
-
-## STOPPED HERE - bug that logs/build modal can't show at once
 
 You might next want to transfer your images to your local cluster. To do this,
 we recommend using Tunel with the [globus plugin](/interface/plugin-globus).
@@ -171,13 +181,18 @@ You might also want to interact with the containers from inside the tunel Docker
 container, or from the host! We recommend interaction from within the
 Tunel container, discussed next.
 
-If you get an error, you can click "logs" in the lower right to see server logs.
-This can help if you need to [submit an issue](https://www.github.com/singularityhub/interface/issues).
+<br>
+<hr>
 
-![img/logs.png](img/logs.png)
 
 ## Singularity Registry
-To interact with your database easily, you can shell inside the container. In
+The Tunel interface is running a local Singularity Global Client, and this is
+the <a href="https://singularityhub.github.io/sregistry-cli" target="_blank">containertools solution</a> 
+for the single user to have a small local database of organized conatainers. 
+This is a smaller database compared to the more substantial, open source
+<a href="https://singularityhub.github.io/sregistry" target="_blank">Singularity Registry</a>
+that your institution might choose to deploy. This means that to interact with your 
+database easily, you can shell inside the container. In
 the following example, we are still using the container called "tunel."
 
 ```
@@ -192,6 +207,8 @@ In [1]: client.speak()
 [client|hub] [database|sqlite:////root/.singularity/sregistry.db]
 ```
 
+The client above that is loaded by default with `sregistry shell` is the
+<a href="https://singularityhub.github.io/sregistry-cli" target="_blank">Singularity Global Client</a>.
 Try pulling an image. It will show up in your interface.
 
 ```
@@ -230,10 +247,11 @@ When you interact in the online interface or on the command line, we will be
 updating the same database. This is really great, because it means lots of avenues
 for interaction between your command line and all those webby things.
 
-Next, read up on [development](/interface/development), which has handy practices
-for making changes, and debugging.
+Next, you can read up on [development](/interface/development), which has handy practices
+for making changes, and debugging, or you can read about [the Globus endpoint](/interface/plugin-globus)
+for easily transferring containers between your local computer and cluster endpoints.
 
 <div>
-    <a href="/interface/ui"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/interface"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
     <a href="/interface/development"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
 </div><br>

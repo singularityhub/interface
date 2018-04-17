@@ -78,12 +78,22 @@ if [ "${SREGISTRY_START}" == "yes" ]; then
             echo "Generating Globus Personal Endpoint"
             token=$(globus endpoint create --personal "${ENDPOINT}" --jmespath 'globus_connect_setup_key'  | tr -d '"') 
             /opt/globus/globusconnectpersonal -setup "${token}"
+            python /code/script/update_tokens.py globus
 
             # Export that globus is enabled to config
-            echo "PLUGIN_GLOBUS_ENABLED=True" >> /code/tunel/config.py
-            echo "ROBOTNAME='${ROBOTNAME}'" >> /code/tunel/config.py
-            echo "PLUGIN_GLOBUS_ENDPOINT=\"$(globus endpoint local-id)\"" >> /code/tunel/config.py
-           
+            if ! grep -q PLUGIN_GLOBUS_ENABLED /code/tunel/config.py; then
+                echo "PLUGIN_GLOBUS_ENABLED=True" >> /code/tunel/config.py
+            fi
+
+            if ! grep -q ROBOTNAME /code/tunel/config.py; then
+                echo "ROBOTNAME='${ROBOTNAME}'" >> /code/tunel/config.py
+            fi
+
+            ENDPOINT_ID=$(globus endpoint local-id)
+            if [ $ENDPOINT_ID != "No Globus Connect Personal installation found." ]; then
+                echo "PLUGIN_GLOBUS_ENDPOINT=\"${ENDPOINT_ID}\"" >> /code/tunel/config.py
+            fi    
+       
         fi
 
         # Have we set up config paths yet?

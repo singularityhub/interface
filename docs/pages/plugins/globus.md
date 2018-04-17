@@ -21,17 +21,24 @@ You would then want to authenticate your container to access your endpoints.
 $ docker exec -it tunel python /code/script/update_tokens.py globus
 ```
 
+<hr>
+
+
 ## Updating Credentials
 You might hit a time when your credentials need to be updated! If so, you will
 see instructions in the interface.
 
-![img/plugin-globus-update-tokens.png](img/plugin-globus-update-tokens.png)
+![img/plugin-globus-update-tokens.png](img/globus/update-tokens.png)
 
 But if you issued this command when you created the container, since we retrieve
 a refresh token you shouldn't need to do this twice. Instead, you should see 
 a table of endpoints under scope `my-endpoints` and `shared-with-me`.
 
-![img/globus-endpoints.png](img/globus-endpoints.png)
+![img/globus-endpoints.png](img/globus/globus-endpoints.png)
+
+
+<br>
+<hr>
 
 ### Commands
 To update your tokens, the easiest way is to issue a command to the docker
@@ -78,9 +85,127 @@ $ Your tokens are up to date.
 ```
 
 We use the same credentials in the interface, so you can refresh the page and
-use your Globus endpoint.
+use your Globus endpoint. 
+
+## Your Endpoints
+Globus groups endpoints based on scope. The default Globus plugin page will show you
+all endpoints with scope `shared-with-me` and `my-endpoints`. You might not have many,
+it's ok! What you likely want to do is use the search box at the top to search for
+endpoints that you are interested in. For example, since I am a Stanford person,
+I might search for Stanford and discover many Globus endpoints installed across 
+Stanford resources:
+
+![img/globus/stanford-endpoints.png](img/globus/stanford-endpoints.png)
+
+Your access to these endpoints depends upon (typically) you having an account on each
+server. If you don't have access to a particular endpoint, you could try reaching out
+to the contact email to ask if it might be possible. More likely, you will need to
+click on an endpoint of interest to authenticate for the endpoint in the Globus portal.
+When this works and you can "see" the endpoint from the Tunel client, there will be a 
+green "active" button as we see in the picture above. Let's click on the "SRCC Sherlock"
+endpoint and look closer.
+
+![img/globus/stanford-sherlock.png](img/globus/stanford-sherlock.png)
+
+What you see here is a simple file browser. The endpoint is on the left, and in this case,
+we are looking at my `$SCRATCH` on Sherlock. The Sregistry local images are in the box on
+the right. 
+
+<hr><br>
+
+## Transfer
+For either, I can select a local image and click the left arrow to transfer 
+it to the cluster:
+
+![img/globus/transfer-to-sherlock.png](img/globus/sherlock-transfer-to.png)
+
+or I can click on an image file row in the left, and when I do so, a right arrow
+appears that I can click to transfer the selected container to my local registry!
+
+![img/globus/transfer-from-sherlock.png](img/globus/sherlock-transfer-from.png)
+
+Note that the transfer itself is dependent on Globus (it doesn't
+happen immediately) so the result may take a few minutes. If I click on the view
+task link, I can watch progress.
+
+![img/globus/transfer-activity.png](img/globus/transfer-activity.png)
+
+When the transfer is absolutely done, depending on your preferences, you are likely to
+get an email with the status.
+
+![img/globus/globus-email.png](img/globus/globus-email.png)
+
+Once you receive this notification, you can be sure that the task is considered complete,
+and it will appear in the Globus API endpoint for successful transfers for your
+client to find and finish the final import of the container. You will see a message
+that the task was found as finished, and the container transfer done if done from
+remote to local:
+
+![img/globus/new-container.png](img/globus/new-container.png)
+
+If you transferred to a remote, you should be able to see the file 
+there in the interface.
+
+![img/globus/after-transfer.png](img/globus/after-transfer.png)
+
+If you want to change folders, just click on a folder icon in the list to navigate.
+Here I am after clicking on the folder `.singularity`.
+
+
+![img/globus/navigate.png](img/globus/navigate.png)
+
+<hr><br>
+
+## Debugging
+
+<strong>What happens if the transfer doesn't work?</strong>
+You might first look at the server logs. See if your tunel server has an issues:
+
+```bash
+
+docker logs tunel
+```
+
+If everything looks good there, you can check the application logs in the interface
+or via the command line:
+
+```bash
+
+# Where are the logs?
+$ docker exec it tunel bash
+$ docker exec tunel ls /tmp
+Singularity.adqtcmtb
+gunicorn-access.log
+gunicorn.log
+nginx-access.log
+nginx-error.log
+nginx.pid
+tunel-server-blank-muffin-0742.log
+tunel-server-bumfuzzled-despacito-2591.log
+
+```
+```bash
+$ docker exec tunel cat /tmp/tunel-server-bumfuzzled-despacito-2591.log
+```
+
+That will usually give some insight about the issue! You can also check the
+configuration, and make sure that you see that Globus is enabled, you have an `ENDPOINT_ID`
+and `ROBOTNAME`:
+
+```bash
+$ docker exec tunel cat /code/tunel/config.py
+PLUGIN_GLOBUS_ENABLED=True
+ROBOTNAME="spurious-meatball"
+PLUGIN_GLOBUS_ENDPOINT="af72ea3c-34a2-11e8-b93b-0ac6873fc732"
+```
+
+If any of those are missing, check out the commands that need to be run in the
+[entrypoint.sh](https://github.com/singularityhub/interface/blob/master/script/entrypoint.sh#L68) script for Globus, and you can interactively run
+them to create or update the endpoint or credentials. Usually this might be the case
+if you didn't originally create your container to be Globus enabled. If you have any
+trouble, please <a href="https://www.github.com/singularityhub/interface/issues" target="_blank">reach out</a>.
 
 <div>
-    <a href="/interface/ui"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/interface/quick-start"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
     <a href="/interface/development"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
 </div><br>

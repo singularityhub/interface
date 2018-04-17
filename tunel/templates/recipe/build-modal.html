@@ -67,6 +67,9 @@
                    data = {'uri': uri,
                            'container': finished_image}
 
+                   console.log(finished_image)
+                   console.log(uri)
+
                    fetch('/action/add', {
                        headers: { "X-CSRFToken": csrf_token },
                        credentials: 'same-origin',
@@ -77,7 +80,11 @@
                    .then(function(data) {
                        console.log(data);
                        hide_loader();  
-                       $('#progress').append("<a href='/container/view?uri=" + data.data['uri'] + "'>View " + data.data['uri'] + "</a>");
+                       if (data.data['container'] == ''){
+                           $('#progress').append("There was a problem building this container! See the logs for details");
+                       } else {
+                           $('#progress').append("<a href='/container/view?uri=" + data.data['uri'] + "'>View " + data.data['uri'] + "</a>");
+                       }
                    })
                   .catch(function(err) {
                        console.log(data);
@@ -95,13 +102,14 @@
                     var lines = message.split('\n')
                     $.each(lines, function(e,line){
 
+                       console.log(e + ' ' + line);
+
                        // The last line is the finished image to add!
                        $("#finished-image").text(line);
 
                        // Remove weird characters
                        line = line.replace('[0m','').replace('[31m(B[mC','');
                        $('#progress').append(line + '<br>');
-                       console.log(line);           
                     })
                 }
                 xhr.send(data)

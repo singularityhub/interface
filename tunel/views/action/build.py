@@ -76,11 +76,14 @@ def action_build(builder={}):
         recipe = write_temp_recipe(recipe)
 
         if recipe is not None:          
+
+            # When whiteout but is fixed with Singularity...
             image, builder = Client.build(recipe=recipe,
                                           robot_name=True,
                                           sudo=False, stream=True)
 
-        builder = itertools.chain(builder, [image])
+            app.logger.info('build %s' %image)
+            builder = itertools.chain(builder, [image])
 
     return Response(builder, mimetype='text/plain')
 

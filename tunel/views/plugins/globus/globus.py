@@ -124,6 +124,7 @@ def globus_transfer_to(endpoint_id, message="Invalid request."):
         data = json.loads(request.data.decode('utf-8'))
         path = data.get('path', '').replace('/~/','')
         containers = data.get('containers', [])
+        images = []
         
         for container in containers:
 

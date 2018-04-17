@@ -22,6 +22,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import grp
 import os
 import pwd
+import shutil
+import stat
 import tempfile
 import globus_sdk
 

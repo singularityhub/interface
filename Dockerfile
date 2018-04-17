@@ -24,15 +24,9 @@ WORKDIR /opt
 RUN wget https://s3.amazonaws.com/connect.globusonline.org/linux/stable/globusconnectpersonal-2.3.4.tgz && \
     tar xzf globusconnectpersonal-2.3.4.tgz && mv globusconnectpersonal-2.3.4 globus && sed -i -e 's/-eq 0/-eq 999/g' /opt/globus/globusconnectpersonal
 
-# Sregistry with Globus
-RUN git clone -b integration/globus https://www.github.com/vsoch/sregistry-cli && \
-              cd sregistry-cli && python setup.py install
-#RUN git clone https://www.github.com/singularityhub/sregistry-cli && \
-#              cd sregistry-cli && python setup.py install
-
 WORKDIR /tmp
-RUN wget https://github.com/singularityware/singularity/releases/download/2.4.3/singularity-2.4.3.tar.gz \
-    && tar -xzf singularity-2.4.3.tar.gz && cd singularity-2.4.3 && ./autogen.sh && ./configure --prefix=/usr/local \
+RUN git clone -b development-2.x https://github.com/singularityware/singularity.git \
+    && cd singularity && ./autogen.sh && ./configure --prefix=/usr/local \
     && make && make install
 
 ADD . /code
@@ -49,10 +43,9 @@ WORKDIR /code
 RUN /opt/conda/bin/pip install --upgrade pip && \
     /opt/conda/bin/pip install globus-cli && \
     /opt/conda/bin/pip install -r /code/requirements.txt && \
+    /opt/conda/bin/pip install sregistry==0.0.83 && \
+    /opt/conda/bin/pip install spython==0.0.25 && \
     /opt/conda/bin/python setup.py install
-
-# Install HPC Container Maker
-#RUN git clone https://github.com/NVIDIA/hpc-container-maker.git && cd hpc-container-maker && python setup.py install
 
 # Clean up
 RUN apt-get autoremove -y && \
@@ -62,7 +55,6 @@ RUN apt-get autoremove -y && \
 # Add a user for Globus, etc.
 RUN useradd -ms /bin/bash tunel-user
 RUN echo "gtunel-user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-#USER tunel-user
 
 ENTRYPOINT ["/bin/bash", "/code/script/entrypoint.sh"]
 WORKDIR /code

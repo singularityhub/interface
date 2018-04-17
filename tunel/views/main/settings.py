@@ -40,19 +40,25 @@ import json
 
 @app.route('/settings', methods=['GET'])
 def settings():
-    return render_template('main/settings.html')
+    app.sregistry.client_name = 'nvidia'
+    nvidia = app.sregistry._get_setting('SREGISTRY_NVIDIA_TOKEN')
+    return render_template('main/settings.html', nvidia=nvidia)
 
 
-@app.route('/set/settings', methods=['GET'])
+@app.route('/set/settings', methods=['POST'])
 def set_settings():
-    '''set a token for nvidia cloud. This should be a POST with csrf, okay
-       with localhost for now
+    '''set a token for nvidia cloud. 
     '''
-    token = request.args.get('nvidia')
-    if token is not None:
-        print(token)
+
+    data = json.loads(request.data.decode('utf-8'))
+    token = data.get('nvidia')
+
+    if token not in ['', None]:
+        app.logger.info("Updated token, see /root/.sregistry")
         flash('Your Nvidia Token has been updated')
         app.sregistry.client_name = 'nvidia'
         app.sregistry._get_and_update_setting('SREGISTRY_NVIDIA_TOKEN', token)
+                 
+    return jsonify({"token": token })
 
-    return Response(token, status=200, mimetype='application/json')
+

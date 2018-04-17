@@ -1,0 +1,119 @@
+<!-- Hidden button to show logs-->
+<a href="#" 
+   id="show-modal" 
+   class="btn btn-lg btn-primary" 
+   style="display:none" 
+   data-toggle="modal" 
+   data-target="#build-modal"></a>
+
+<!-- large modal -->
+<div class="modal fade" style="padding-top:200px" id="build-modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+            <label for="recipe" class="col-form-label">Unique Resource Identifier (uri)</label>
+<br>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="library/container:latest" id="uri">
+            <input type="hidden" id="finished-image" style='display:none'></input>
+          </div>
+          <pre id="progress" style='display:none'>
+          </pre>
+      </div>
+      <div class="modal-footer">
+        <button id="do-build" onclick="doBuild()" type="button" class="btn btn-primary">Build Away, Merrill!</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+
+    function doBuild() {
+
+        show_loader();
+
+        // Support for Singularity Recipes
+        var recipe = $("#singularity-content").text();
+        console.log(recipe);
+        var uri = $('#uri').val();
+        console.log(uri);
+        console.log(recipe);
+
+        if ((uri != '') && (recipe != null)) {
+            var csrf_token = "{{ csrf_token() }}";
+
+               var data = new FormData();
+                   data.append('uri', uri);
+                   data.append('recipe', recipe);
+
+                var xhr = new XMLHttpRequest()
+                xhr.withCredentials = true;
+                xhr.open("POST", '/action/build' , true)
+                xhr.setRequestHeader("X-CSRFToken", csrf_token);
+
+                xhr.onloadend = function () {
+                   console.log('done!');
+                   var finished_image = $("#finished-image").text();
+
+                   var csrf_token = "{{ csrf_token() }}";
+                   data = {'uri': uri,
+                           'container': finished_image}
+
+                   console.log(finished_image)
+                   console.log(uri)
+
+                   fetch('/action/add', {
+                       headers: { "X-CSRFToken": csrf_token },
+                       credentials: 'same-origin',
+                       body: JSON.stringify(data),
+ 	               method: 'POST' 
+                   })
+                   .then((response) => response.json())
+                   .then(function(data) {
+                       console.log(data);
+                       hide_loader();  
+                       if (data.data['container'] == ''){
+                           $('#progress').append("There was a problem building this container! See the logs for details");
+                       } else {
+                           $('#progress').append("<a href='/container/view?uri=" + data.data['uri'] + "'>View " + data.data['uri'] + "</a>");
+                       }
+                   })
+                  .catch(function(err) {
+                       console.log(data);
+                   });
+
+                }
+
+                // Update user with dialog
+                xhr.onprogress = function () {
+
+                    $('#progress').text('');
+                    $('#progress').show();
+
+                    var message = xhr.responseText.replace('\n','\n<br>');
+                    var lines = message.split('\n')
+                    $.each(lines, function(e,line){
+
+                       console.log(e + ' ' + line);
+
+                       // The last line is the finished image to add!
+                       $("#finished-image").text(line);
+
+                       // Remove weird characters
+                       line = line.replace('[0m','').replace('[31m(B[mC','');
+                       $('#progress').append(line + '<br>');
+                    })
+                }
+                xhr.send(data)
+
+        }
+     }
+    </script>

@@ -25,25 +25,27 @@ that gap, for example delivering restful APIs for a command line client, OAuth2
 flows to authenticate via your platform of choice, or even  sharing your containers with others, period.
 
 "Tunel" is a tunnel between those two things. It takes the technology of some of the
-core [container tools](https://singularityhub.github.io/) and brings them together to
+core <a href="https://singularityhub.github.io/" target="_blank">container tools</a> and brings them together to
 have some open source, collaborative fun, and importantly, to help the academic scientist
 use container technology. 
 
 ## Getting Started
- - [Interface](/interface/ui): A quick introduction to Tunel's interface. That is what the repository is called, after all.
  - [Quick Start](/interface/quick-start): A quick start guide to getting your Tunel up and running!
  - [Development](/interface/development): Helpful commands for development and debugging.
+
+<hr>
 
 ## Plugins
 
  - [Globus](/interface/plugin-globus): Connect your tunel to Globus to transfer images to and from your Globus endpoints.
 
+<br><br>
 
 ## Feedback
-We are looking for feedback about what features you would like implemented next!
+@vsoch is looking for feedback about what features you would like implemented next!
 
- - Exposing the remainder of Singularity Registry Global Client endpoints (Google Drive, Storage, Dropbox, etc.) so you can move containers easily from one to another
- - Integration of the [Builders](https://singularityhub.github.io/builders/) so you can create a recipe, click a button, and have it build on Google Cloud.
+ - Exposing the remainder of Singularity Registry Global Client endpoints (Google Drive, Storage, Dropbox, etc.) so you can move containers easily from one to another. Which one do you want to see first?
+ - Integration of the [Builders](https://singularityhub.github.io/builders/) so you can build with different architectures on Google Cloud.
  - An ability to easily share containers via the various platforms you connect to.
  - An integration with Github?
 
@@ -63,7 +65,6 @@ This code is licensed under the Affero GPL, version 3.0 or later [LICENSE](https
 
 ## Acknowledgements
 
- - [@olifre for docker2oci](https://github.com/olifre/dockerhub2oci/blob/master/LICENSE) The `docker2oci` script to handle the whiteout is essential for any kind of pull to work, because it's broken in Singularity.
  - [Singularityware](https://github.com/singularityware): the Singularity open source community!
  - [The Robots](https://vsoch.github.io/robots): for a continually strong spirit.
 

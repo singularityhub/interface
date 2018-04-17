@@ -124,6 +124,7 @@ def globus_transfer_to(endpoint_id, message="Invalid request."):
         data = json.loads(request.data.decode('utf-8'))
         path = data.get('path', '').replace('/~/','')
         containers = data.get('containers', [])
+        images = []
         
         for container in containers:
 
@@ -210,7 +211,7 @@ def get_endpoints(term=None, message=None, endpoints=None):
 
 
 @app.route('/globus', methods=['POST', 'GET'])
-def globus(term=None, needs_update=True, endpoints=None):
+def globus(term=None, needs_update=True, endpoints=None, events=None):
     '''This is the primary globus view. If the client isn't updated, the user is
        given a command to execute to the container to update the tokens. The
        default view, given a token, will return a view of all endpoints

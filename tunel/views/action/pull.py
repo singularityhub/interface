@@ -29,38 +29,70 @@ from flask import (
 )
 
 from tunel.server import app
+from spython.main import Client
 
 import json
+import itertools
 import logging
 import os
 
 
-@app.route('/action/pull')
+@app.route('/action/pull', methods=['POST'])
 def action_pull():
     '''the fetch view to perform the pull, and return a response
     '''
 
     # Ensure uri appears once
-
-    container = request.args.get('q')
-    uri = request.args.get('uri')
+    container = request.form.get('uri') # ubuntu:latest
+    uri = request.form.get('endpoint')  # docker://
     container = '%s%s' %(uri, container.replace(uri,''))
 
     app.logger.info("PULL for %s" %container)
 
-    # Make sure we use the right client
-    os.environ['SREGISTRY_CLIENT'] = uri.replace('://','')
-    os.environ.putenv('SREGISTRY_CLIENT', uri.replace('://',''))
-    from sregistry.main import get_client
-    client = get_client(image=container)
-    
-    try:
-        image_file = client.pull(container, force=True)
-    except:
-        image_file = '''ERROR: manifest unknown, or pull error. 
-                        Use docker-compose logs web to see issue!'''
+    # If nvidia is used, use sregistry client
+    if 'nvidia' in uri:
+        nvidia = app.sregistry._get_setting('SREGISTRY_NVIDIA_TOKEN')
+
+        # Make sure we use the right client
+        os.environ['SREGISTRY_CLIENT'] = uri.replace('://','')
+        os.environ.putenv('SREGISTRY_CLIENT', uri.replace('://',''))
+        from sregistry.main import get_client
+        client = get_client(image=container)
+        app.logger.info("Using client %s" %client.client_name)
+
+        try:
+            puller = client.pull(container, force=True)
+        except:
+            puller = '''ERROR: manifest unknown, or pull error. 
+                            Use docker-compose logs web to see issue!'''
         
-    return Response(image_file, mimetype='text/plain')
+
+    else:
+        # We will stream the response back!
+        image, puller = Client.pull(container, stream=True, pull_folder='/tmp')
+        puller = itertools.chain(puller, [image])
+        
+    return Response(puller, mimetype='text/plain')
+
+
+@app.route('/action/add', methods=['POST'])
+def action_add():
+    '''add a finished image to the client.
+    '''
+    data = json.loads(request.data.decode('utf-8'))
+    container = data.get('container')
+    uri = data.get('uri')
+
+    if container not in ['', None]:
+        if os.path.exists(container):
+            app.logger.info('ADD %s' %container)
+            container = app.sregistry.add(image_uri=uri, 
+                                          image_path=container)
+            container = container.name
+                 
+    message = {'container': container, 'uri': uri }
+    return jsonify({"data": message })
+
 
 
 @app.route('/pull')

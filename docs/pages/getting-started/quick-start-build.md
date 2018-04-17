@@ -3,7 +3,7 @@ layout: default
 title: Getting Started
 pdf: true
 permalink: /quick-start-build
-toc: true
+toc: false
 ---
 
 ## Build Containers
@@ -11,6 +11,7 @@ Cool! We can also use Tunel to work with Singularity recipes, which means:
 
  - Convert from Dockerfile to Singularity, or vice versa
  - Build a Singularity container from the interface!
+ - (coming soon) Deploy a build on Google Cloud using the <a href="https://singularityhub.github.io/sregistry-cli/client-google-compute" target="_blank">SRegistry Builders</a>
 
 Click on the Build tab to see the builder interface.
 
@@ -39,10 +40,10 @@ At the bottom, you can again click a link to see the finished container:
 
  - [Logging and utils](/interface/quick-start-utils)
  - [Development and API](/interface/development)
+ - [Quick Start Intro](/interface/quick-start)
  - [Pull containers](/interface/quick-start-pull)
- - [Build containers](/interface/quick-start-build)
 
 <div>
-    <a href="/interface/quick-start-utils"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
-    <a href="/interface/development"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
+    <a href="/interface/quick-start-pull"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/interface/quick-start-utils"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
 </div><br>

@@ -106,11 +106,11 @@ for easily transferring containers between your local computer and cluster endpo
 <strong>Where to Next?</strong>
 
  - [Development and API](/interface/development)
+ - [Quick Start Intro](/interface/quick-start)
  - [Pull containers](/interface/quick-start-pull)
  - [Build containers](/interface/quick-start-build)
- - [Logging and utils](/interface/quick-start-utils)
 
 <div>
-    <a href="/interface/quick-start-pull"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/interface/quick-start-build"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
     <a href="/interface/development"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
 </div><br>

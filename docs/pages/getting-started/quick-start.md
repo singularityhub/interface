@@ -45,6 +45,8 @@ $ docker restart tunel
 When you open your browser to [http://127.0.0.1](http://127.0.0.1) you will be 
 greeted by the robot!
 
+<br>
+
 ![img/quickstart/quickstart-1.png](img/quickstart/quickstart-1.png)
 
 
@@ -87,6 +89,6 @@ If you want to first see more about globus, see the the [Globus plugin](/interfa
 
 <hr>
 <div>
-    <a href="/interface/quick-start-pull"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
-    <a href="/interface/development"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
+    <a href="/interface/"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/interface/quick-start-pull"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
 </div><br>

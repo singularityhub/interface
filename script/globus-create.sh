@@ -3,10 +3,10 @@
 usage () {
 
     echo "Usage:
-          docker run <container> -it bash /code/script/globus_create_endpoint.sh
+          docker exec -it tunel bash /code/script/globus-create.sh
              
           Options:
-             --ename: the endpoint name. If not specified, will make a funny one
+             --ename: the endpoint name. If not specified, will use robot name
          
          "
 }
@@ -14,11 +14,6 @@ usage () {
 ROBOTNAME=$(python /code/script/robotnamer.py)
 ENDPOINT="sregistry-${ROBOTNAME}"
 export ROBOTNAME
-
-if [ $# -eq 0 ]; then
-    usage
-    exit
-fi
 
 while true; do
     case ${1:-} in
@@ -65,11 +60,12 @@ fi
 echo "ROBOTNAME='${ROBOTNAME}'" >> /code/tunel/config.py
 
 ENDPOINT_ID=$(globus endpoint local-id)
-if [ $ENDPOINT_ID != "No Globus Connect Personal installation found." ]; then
+if [ "${ENDPOINT_ID}" != "No Globus Connect Personal installation found." ]; then
     echo "PLUGIN_GLOBUS_ENDPOINT=\"${ENDPOINT_ID}\"" >> /code/tunel/config.py
 fi    
 
 # Have we set up config paths yet?
 if [ ! -f "$HOME/.globusonline/lta/config-paths" ]; then
+    mkdir -p "${HOME}/.globusonline/lta"
     cp /code/tunel/views/plugins/globus/config-paths "${HOME}/.globusonline/lta/config-paths";
 fi

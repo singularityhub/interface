@@ -8,7 +8,7 @@ RUN apt-get -y install build-essential
 RUN apt-get -y install apt-utils cmake wget unzip libffi-dev libssl-dev \
                        libtool autotools-dev automake autoconf git \
                        libarchive-dev squashfs-tools uuid-dev \
-                       vim jq aria2 nginx
+                       vim jq aria2 nginx python2 # python2 just until globusonline updated
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV LC_ALL C.UTF-8
@@ -37,6 +37,12 @@ RUN cp /code/script/nginx.conf /etc/nginx/nginx.conf && \
     cp /code/tunel/config_dummy.py /code/tunel/config.py && \
     chmod u+x /code/script/generate_key.sh && \
     /bin/bash /code/script/generate_key.sh /code/tunel/config.py
+
+Generating Globus Personal Endpoint
+/usr/bin/env: ‘python2’: No such file or directory
+/code/script/globus-create.sh: line 68: [: too many arguments
+cp: cannot create regular file '/root/.globusonline/lta/config-paths': No such file or directory
+
 
 WORKDIR /code
 RUN /opt/conda/bin/pip install --upgrade pip && \

@@ -19,11 +19,6 @@ If you want to update your tokens, a script is also provided.
 
 ```bash
 $ docker exec -it tunel python /code/script/update_tokens.py globus
-```
-
-And if you need to restart the container:
-
-```bash
 $ docker restart tunel
 ```
 

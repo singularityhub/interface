@@ -38,11 +38,6 @@ RUN cp /code/script/nginx.conf /etc/nginx/nginx.conf && \
     chmod u+x /code/script/generate_key.sh && \
     /bin/bash /code/script/generate_key.sh /code/tunel/config.py
 
-Generating Globus Personal Endpoint
-/usr/bin/env: ‘python2’: No such file or directory
-/code/script/globus-create.sh: line 68: [: too many arguments
-cp: cannot create regular file '/root/.globusonline/lta/config-paths': No such file or directory
-
 
 WORKDIR /code
 RUN /opt/conda/bin/pip install --upgrade pip && \

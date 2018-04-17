@@ -109,7 +109,7 @@
          var csrf_token = "{{ csrf_token() }}";
          var token = $("#nvidiaToken").val();
 
-         fetch('/set/settings, {
+         fetch('/set/settings', {
              headers: { "X-CSRFToken": csrf_token },
              credentials: 'same-origin',
              body: JSON.stringify({'nvidia': token}),

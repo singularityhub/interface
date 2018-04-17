@@ -15,8 +15,7 @@ ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
 ENV PATH /opt/conda/bin:$PATH
-RUN mkdir /code
-RUN mkdir /data
+RUN mkdir /code && mkdir /data && ln -s /opt/conda/bin/python /usr/bin/python
 
 # Install Globus Personal Connect
 

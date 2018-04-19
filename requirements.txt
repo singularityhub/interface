@@ -1,4 +1,4 @@
-spython==0.0.23
+spython==0.0.26
 ipython
 paramiko==2.4.0
 cycler==0.10.0

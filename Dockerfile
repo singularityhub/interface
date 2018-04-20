@@ -25,7 +25,6 @@ RUN wget https://s3.amazonaws.com/connect.globusonline.org/linux/stable/globusco
 RUN git clone https://github.com/sirosen/globusconnectpersonal-py3-patched && \
     cp globusconnectpersonal-py3-patched/gc*.py /opt/globus
 
-WORKDIR /tmp
 #RUN git clone -b development-2.x https://github.com/singularityware/singularity.git \
 
 RUN git clone -b token-sanity https://github.com/dctrud/singularity.git \
@@ -48,7 +47,7 @@ RUN /opt/conda/bin/pip install --upgrade pip && \
     /opt/conda/bin/pip install globus-cli && \
     /opt/conda/bin/pip install -r /code/requirements.txt && \
     /opt/conda/bin/pip install sregistry==0.0.83 && \
-    /opt/conda/bin/pip install spython==0.0.26 && \
+    /opt/conda/bin/pip install spython==0.0.28 && \
     /opt/conda/bin/python setup.py install
 
 # Clean up

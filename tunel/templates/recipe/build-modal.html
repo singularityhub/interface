@@ -38,14 +38,13 @@
 
     function doBuild() {
 
-        show_loader();
+        show_loader('building!');
 
         // Support for Singularity Recipes
-        var recipe = $("#singularity-content").text();
+        var recipe = $("#singularity-content").val();
         console.log(recipe);
         var uri = $('#uri').val();
         console.log(uri);
-        console.log(recipe);
 
         if ((uri != '') && (recipe != null)) {
             var csrf_token = "{{ csrf_token() }}";
@@ -61,7 +60,7 @@
 
                 xhr.onloadend = function () {
                    console.log('done!');
-                   var finished_image = $("#finished-image").text();
+                   var finished_image = $("#finished-image").val();
 
                    var csrf_token = "{{ csrf_token() }}";
                    data = {'uri': uri,
@@ -105,7 +104,7 @@
                        console.log(e + ' ' + line);
 
                        // The last line is the finished image to add!
-                       $("#finished-image").text(line);
+                       $("#finished-image").val(line);
 
                        // Remove weird characters
                        line = line.replace('[0m','').replace('[31m(B[mC','');

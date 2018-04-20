@@ -25,9 +25,15 @@
 }
 </style>
 <div id="fade"></div>
-<div id="loader"><img width="300px" src="{{ url_for('static', filename='img/robot-blinking.gif') }}"/></div>
+<div id="loader">
+    <img width="300px" src="{{ url_for('static', filename='img/robot-blinking.gif') }}"/>
+    <h3 id="loader-text"></h3>
+</div>
 <script>
-function show_loader() {
+function show_loader(title) {
+   if (title != null){
+       $('#loader-text').text(title);
+   }
    $('.modal-dialog').hide();
    $('#fade').show();
    $('#loader').show();

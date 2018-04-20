@@ -12,7 +12,7 @@ RUN apt-get -y install build-essential
 RUN apt-get -y install apt-utils cmake wget unzip libffi-dev libssl-dev \
                        libtool autotools-dev automake autoconf git \
                        libarchive-dev squashfs-tools uuid-dev \
-                       vim jq aria2 nginx python
+                       vim jq aria2 nginx
 
 ENV PATH /opt/conda/bin:$PATH
 
@@ -20,10 +20,14 @@ ENV PATH /opt/conda/bin:$PATH
 
 WORKDIR /opt
 RUN wget https://s3.amazonaws.com/connect.globusonline.org/linux/stable/globusconnectpersonal-2.3.4.tgz && \
-    tar xzf globusconnectpersonal-2.3.4.tgz && mv globusconnectpersonal-2.3.4 globus && sed -i -e 's/-eq 0/-eq 999/g' /opt/globus/globusconnectpersonal
+    tar xzf globusconnectpersonal-2.3.4.tgz && mv globusconnectpersonal-2.3.4 globus && sed -i -e 's/-eq 0/-eq 999/g' /opt/globus/globusconnectpersonal 
 
-WORKDIR /tmp
-RUN git clone -b development-2.x https://github.com/singularityware/singularity.git \
+RUN git clone https://github.com/sirosen/globusconnectpersonal-py3-patched && \
+    cp globusconnectpersonal-py3-patched/gc*.py /opt/globus
+
+#RUN git clone -b development-2.x https://github.com/singularityware/singularity.git \
+
+RUN git clone -b token-sanity https://github.com/dctrud/singularity.git \
     && cd singularity && ./autogen.sh && ./configure --prefix=/usr/local \
     && make && make install
 
@@ -43,7 +47,7 @@ RUN /opt/conda/bin/pip install --upgrade pip && \
     /opt/conda/bin/pip install globus-cli && \
     /opt/conda/bin/pip install -r /code/requirements.txt && \
     /opt/conda/bin/pip install sregistry==0.0.83 && \
-    /opt/conda/bin/pip install spython==0.0.25 && \
+    /opt/conda/bin/pip install spython==0.0.29 && \
     /opt/conda/bin/python setup.py install
 
 # Clean up

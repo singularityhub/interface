@@ -62,12 +62,19 @@ def generator():
 
         # Do the conversion, from string
 
-        parser = parser()
-        parser.lines = recipe.split('\n') 
-        if hasattr(parser,'load_recipe'):
-            parser.load_recipe()        
-        parser._parse()
-        recipes[convertType] = parser.convert()
+        try:
+            parser = parser()
+            parser.lines = recipe.replace('\r','').split('\n')
+            if hasattr(parser,'load_recipe'):
+                parser.load_recipe()        
+            parser._parse()
+            recipes[convertType] = parser.convert()
+
+        except:
+            message = "There was an error parsing that recipe."
+            message += 'Try "spython recipe" on the command line to debug.'
+            app.logger.error(message)
+            flash(message)
 
     return render_template('recipe/index.html', recipes=recipes,
                                                 recipetype=convertType)

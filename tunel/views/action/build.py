@@ -68,7 +68,7 @@ def action_build(builder={}):
     if request.method == "POST":
 
         uri = request.form.get('uri')
-        recipe = request.form.get('recipe').replace('\r','\n')
+        recipe = request.form.get('recipe').replace('\r','')
         app.logger.info('BUILD: %s' %uri)
 
         # Clean up old recipes
